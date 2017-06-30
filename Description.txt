@@ -21,7 +21,7 @@
             [Work_template]
                 - SettingsBox.py
                 - ObjectTreeBox.py
-                - Log.py
+                - LogBox.py
 
                 [Settings_box]
                     - Connecting.py

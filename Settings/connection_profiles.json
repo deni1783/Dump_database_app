@@ -1,0 +1,141 @@
+{
+  "oracle": {
+    "default": {
+      "host": "vm-ds3",
+      "port": "1521",
+      "user": "testuser",
+      "password": "testuser",
+      "database": "orcl"
+    }
+  },
+  "ms sql server": {
+    "default": {
+      "host": "192.168.88.225",
+      "port": "1433",
+      "user": "qa",
+      "password": "system",
+      "database": ""
+    }
+  },
+  "sybase": {
+    "default": {
+      "host": "vm-ds2",
+      "port": "5001",
+      "user": "sa",
+      "password": "",
+      "database": ""
+    }
+  },
+  "mysql": {
+    "default": {
+      "host": "VM-DBA-2008R2-5",
+      "port": "",
+      "user": "root",
+      "password": "system",
+      "database": ""
+    },
+    "test2": {
+      "host": "VM-DBA-2008R2-5",
+      "port": "",
+      "user": "qa",
+      "password": "qa",
+      "database": ""
+    }
+  },
+  "redshift": {
+    "default": {
+      "host": "rsdbb01.cqcwekr1qlta.us-west-2.redshift.amazonaws.com",
+      "port": "5439",
+      "user": "dbcs",
+      "password": "Dbcs9999",
+      "database": "dbcs_data_source"
+    },
+    "second_cluster": {
+      "host": "rsdbb02.cqcwekr1qlta.us-west-2.redshift.amazonaws.com",
+      "port": "5439",
+      "user": "dbcs",
+      "password": "Dbcs9999",
+      "database": "dbcs_data_source"
+    }
+  },
+  "teradata": {
+    "default": {
+      "host": "192.168.15.221",
+      "port": "",
+      "user": "dbc",
+      "password": "dbc_admin",
+      "database": ""
+    }
+  },
+  "db2": {
+    "default": {
+      "host": "VM-DBA-2008R2-3",
+      "port": "50000",
+      "user": "k21",
+      "password": "12345",
+      "database": "DBCSTEST"
+    }
+  },
+  "postgresql": {
+    "default": {
+      "host": "VM-DBA-2008R2-5",
+      "port": "default",
+      "user": "qa",
+      "password": "qa",
+      "database": "postgres"
+    },
+    "test_profile": {
+      "host": "test",
+      "port": "test",
+      "user": "test",
+      "password": "qa",
+      "database": "postgres"
+    },
+    "me new test profile": {
+      "host": "192.168.1.1",
+      "port": "1332",
+      "user": "denis",
+      "password": "qwerty",
+      "database": "DBCS"
+    },
+    "test2": {
+      "host": "192",
+      "port": "555",
+      "user": "dddd",
+      "password": "qwe",
+      "database": "db"
+    },
+    "asdf": {
+      "host": "asdf",
+      "port": "asdf",
+      "user": "asdf",
+      "password": "asdf",
+      "database": "asdf"
+    },
+    "reqw": {
+      "host": "reqw",
+      "port": "req",
+      "user": "req",
+      "password": "reqw",
+      "database": "rqew"
+    }
+  },
+  "greenplum": {
+    "default": {
+      "host": "192.168.13.59",
+      "port": "default",
+      "user": "min_privs",
+      "password": "Min_privs99",
+      "database": "postgres"
+    }
+  },
+  "netezza": {
+    "default": {
+      "host": "192.168.13.153",
+      "port": "5480",
+      "user": "DBCS",
+      "password": "Dbcs1234",
+      "database": "DBCS_DB"
+    }
+  }
+}
