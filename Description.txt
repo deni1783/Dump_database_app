@@ -16,7 +16,7 @@
         [Main_window_classes]    (классы для приложения)
             - DialectListBox.py
             - WorkTemplateBox.py
-            - ApplicationBox.py  (Основной группированный класс)
+            - ApplicationLayout.py  (Основной группированный класс)
 
             [Work_template]
                 - SettingsBox.py
@@ -81,14 +81,14 @@
 
 -- UI --
 
-1. Создаем главное окно [main_window]
+1. Создаем главное окно Class ApplicationBox
 
-    1.1 Список диалектов [dialect_list_window] Class DialectListBox
+    1.1 Список диалектов  Class DialectListBox
 
         1.1.1 Парсим файл со списком диалектов (supported_dialects_list.json)
         1.1.2 На основе полученых имен, для каждого создаем кнопки и обработчики (в обработчиках идет формирование рабочей области)
 
-    1.2 Рабочая область [work_template_window]
+    1.2 Рабочая область Class WorkTemplateBox
 
         1.2.1 Создаем каркас для всех диалектов
             1.2.1.1 Общий класс Class WorkTemplateBox
