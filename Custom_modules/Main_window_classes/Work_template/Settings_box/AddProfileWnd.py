@@ -1,8 +1,14 @@
 from PyQt5 import QtWidgets, QtCore
+from functools import partial
+# from Custom_modules.Constants import PATH_TO_PROFILE_SETTINGS_JSON
+from Custom_modules.Functions.json_fn import write_new_profile_to_json
 
 
 class AddingNewProfileWindow(QtWidgets.QWidget):
-    def __init__(self, parent, path_to_json: str):
+    """
+        Класс создает окно для добавления нового профиля настроек подлючения
+    """
+    def __init__(self, parent, path_to_json: str, dialect_name: str, change_list_profile_func):
         QtWidgets.QWidget.__init__(self, parent)
 
         """ Заголовки для параметров подключения """
@@ -23,9 +29,19 @@ class AddingNewProfileWindow(QtWidgets.QWidget):
         user_value_ln = QtWidgets.QLineEdit()
         password_value_ln = QtWidgets.QLineEdit()
 
+        """ Кнопки управления """
+        save_btn = QtWidgets.QPushButton('Save')
+        cancel_btn = QtWidgets.QPushButton('Cancel')
+
         """ Параметры подключения (GRID) """
         connecting_string_grid = QtWidgets.QGridLayout()
         connecting_string_grid.setAlignment(QtCore.Qt.AlignTop)
+
+        """ Представления для группировки кнопок управления (HBOX) """
+        btns_hbox = QtWidgets.QHBoxLayout()
+
+        """ Основное представления (VBOX) """
+        wrap_vbox = QtWidgets.QVBoxLayout()
 
 
 
@@ -50,10 +66,67 @@ class AddingNewProfileWindow(QtWidgets.QWidget):
         connecting_string_grid.addWidget(password_value_ln, 5, 1)
 
 
+        """ Группируем кнопки управления """
+        btns_hbox.addWidget(save_btn)
+        btns_hbox.addWidget(cancel_btn)
+
+        """ Группируем в одно представления """
+        wrap_vbox.addLayout(connecting_string_grid)
+        wrap_vbox.addLayout(btns_hbox)
+
+
+        """ Окно добавления нового профиля """
         self.create_profile_wnd = QtWidgets.QWidget(parent)
         self.create_profile_wnd.setWindowFlags(QtCore.Qt.Tool)
         self.create_profile_wnd.setWindowTitle('New profile')
 
-        self.create_profile_wnd.setLayout(connecting_string_grid)
-        # self.setLayout(connecting_string_grid)
-        # create_profile_wnd.show()
+        self.create_profile_wnd.setLayout(wrap_vbox)
+
+
+        """ Вспомогательные функции """
+        def get_settings():
+            """
+            Функция обрабатывает введенные значения и возвращает эти значения
+
+            :return: dict
+            """
+            settings_obj = {
+                'new_profile_name': new_profile_value_ln.text(),
+                'host': host_value_ln.text(),
+                'port': port_value_ln.text(),
+                'database': database_value_ln.text(),
+                'user': user_value_ln.text(),
+                'password': password_value_ln.text()
+            }
+
+            return settings_obj
+
+
+        """ Объявление функции для обработки нажатий """
+        def saved_new_profile():
+            print('pressed save')
+            # Получаем новые настройки
+            new_settings = get_settings()
+
+            # Записываем настройки в файл
+            write_new_profile_to_json(path_to_json, dialect_name, new_settings)
+
+            # Перезаписываем значения в combo box
+            change_list_profile_func(path_to_json, dialect_name)
+
+            # Закрываем окно
+            self.create_profile_wnd.close()
+
+        def cancel():
+            print('pressed cancel')
+            # Закрываем окно
+            self.create_profile_wnd.close()
+
+
+        """ Обработка нажатий на кнопки """
+
+        # Сохранить новый профиль
+        save_btn.clicked.connect(partial(saved_new_profile))
+
+        # Отменить
+        cancel_btn.clicked.connect(partial(cancel))

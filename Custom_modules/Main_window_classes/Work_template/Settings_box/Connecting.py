@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets, QtCore
 from functools import partial
 from Custom_modules.Functions.json_fn import get_profile_settings_value
 from Custom_modules.Functions.json_fn import get_all_profiles
+from Custom_modules.Functions.json_fn import del_profile_from_json
 from Custom_modules.Constants import PATH_TO_PROFILE_SETTINGS_JSON
 
 from Custom_modules.Main_window_classes.Work_template.Settings_box.AddProfileWnd import AddingNewProfileWindow
@@ -118,6 +119,7 @@ class Connecting(QtWidgets.QWidget):
 
         """ Функции для работы с профилями """
 
+        # Переопределяем параметры подключения, на основе выбранного профиля
         def change_profile_settings_values(new_settings: dict):
             """
             Функция перезаписивает значения параметров подключения
@@ -130,6 +132,7 @@ class Connecting(QtWidgets.QWidget):
             user_value_ln.setText(new_settings['user'])
             password_value_ln.setText(new_settings['password'])
 
+        # При изменении активированного профиля
         def change_profile(path_to_json: str, dt_name: str, new_prof: str):
             """
             Функция перерисовывает параметры подкючения при изменении профиля
@@ -147,6 +150,7 @@ class Connecting(QtWidgets.QWidget):
             # Перезаписываем старые значения новыми
             change_profile_settings_values(new_prof_settings)
 
+        # Заполнение названий профилей
         def init_start_profile_values(path_to_json: str, dt_name: str):
             """
             Функция перезаписывает все значения профиля в profile_value_cmbb
@@ -164,15 +168,34 @@ class Connecting(QtWidgets.QWidget):
             profile_value_cmbb.clear()
 
             # Добавляем новые значения в combo box (profile_value_cmbb)
-            for i in profile_list:
+            for i in sorted(profile_list):
                 profile_value_cmbb.addItem(i)
 
             curr_prof = profile_value_cmbb.currentText()
             change_profile(path_to_json, dt_name, curr_prof)
 
-        def show_create_new_prof_window(parent, path_to_json: str):
-            new_prof_window = AddingNewProfileWindow(parent, path_to_json)
+        # Показываем окно создания нового профиля
+        def show_create_new_prof_window(parent, path_to_json: str, dt_name: str, init_new_pfofiles_func):
+            """
+            Функция получает класс создания нового профиля и показывает его
+
+            :param dt_name: имя диалекта, что бы коррекно записать профиль
+            :param parent: Родительский компонент для которого показываем окно
+            :param path_to_json: путь к файлу настроек подключения, что бы записать новые настройки
+            :return: None
+            """
+            new_prof_window = AddingNewProfileWindow(parent, path_to_json, dt_name, init_new_pfofiles_func)
             new_prof_window.create_profile_wnd.show()
+
+        def del_curr_profile(json_file: str, dt_name: str):
+            curr_profile = profile_value_cmbb.currentText()
+
+            # Удаляем профиль из json файла
+            del_profile_from_json(json_file, dt_name, curr_profile)
+
+            # Перерисовываем значения для combo box
+            init_start_profile_values(json_file, dt_name)
+
 
         """ Записываем значения профилей в profile_value_cmbb """
         # Запускаем init_start_profile_values
@@ -187,7 +210,18 @@ class Connecting(QtWidgets.QWidget):
 
         """ Устанавливаем обработку действий """
         # При изменении активированного профиля
-        profile_value_cmbb.activated[str].connect(partial(change_profile, PATH_TO_PROFILE_SETTINGS_JSON, dialect_name))
+        profile_value_cmbb.activated[str].connect(partial(change_profile,
+                                                          PATH_TO_PROFILE_SETTINGS_JSON,
+                                                          dialect_name))
 
         # При нажатии на кнопку добавить, показываем окно заполнени параметров нового профиля
-        add_profile_btn.clicked.connect(partial(show_create_new_prof_window, self, PATH_TO_PROFILE_SETTINGS_JSON))
+        add_profile_btn.clicked.connect(partial(show_create_new_prof_window,
+                                                self,
+                                                PATH_TO_PROFILE_SETTINGS_JSON,
+                                                dialect_name,
+                                                init_start_profile_values))
+
+        # При нажатии удаления текущего профиля
+        delete_profile_btn.clicked.connect(partial(del_curr_profile,
+                                                   PATH_TO_PROFILE_SETTINGS_JSON,
+                                                   dialect_name))

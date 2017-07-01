@@ -77,13 +77,6 @@
     }
   },
   "postgresql": {
-    "default": {
-      "host": "VM-DBA-2008R2-5",
-      "port": "default",
-      "user": "qa",
-      "password": "qa",
-      "database": "postgres"
-    },
     "test_profile": {
       "host": "test",
       "port": "test",
@@ -98,13 +91,6 @@
       "password": "qwerty",
       "database": "DBCS"
     },
-    "test2": {
-      "host": "192",
-      "port": "555",
-      "user": "dddd",
-      "password": "qwe",
-      "database": "db"
-    },
     "asdf": {
       "host": "asdf",
       "port": "asdf",
@@ -118,6 +104,13 @@
       "user": "req",
       "password": "reqw",
       "database": "rqew"
+    },
+    "ds111": {
+      "host": "2345.2345.23",
+      "port": "12313",
+      "database": "sjdfjasfh",
+      "user": "ds1111",
+      "password": "qwer"
     }
   },
   "greenplum": {

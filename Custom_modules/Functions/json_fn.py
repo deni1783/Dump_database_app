@@ -1,5 +1,28 @@
 import json
 
+
+def get_full_json_data(json_file: str):
+    """
+    Получить все данные из json файла
+
+    :param json_file:
+    :return: dict со всеми даннымы
+    """
+    full_data = open(json_file).read()
+    return json.loads(full_data)
+
+def re_write_json_file(json_file: str, new_json_data: dict):
+    """
+     Полностью перезаписывает файл json
+
+    :param json_file: файл который необходимо перезаписать
+    :param new_json_data: новый объект, который записываетм
+    :return: None
+    """
+    json.dump(new_json_data, open(json_file, 'w'), indent=2)
+
+
+
 """ для DialectListBox """
 
 def get_dialects_from_json(json_file: str):
@@ -22,6 +45,8 @@ def get_dialects_from_json(json_file: str):
 
 
 """ Работа с профилями настроек подключения """
+
+
 
 def get_profile_settings_value(json_file: str, dialect_name: str, profile_name: str):
     """
@@ -49,3 +74,46 @@ def get_all_profiles(json_file: str, dialect_name: str):
     for prof_name in json_data[dialect_name]:
         out_arr.append(prof_name)
     return out_arr
+
+
+def write_new_profile_to_json(json_file: str, dialect_name: str, obj_to_write: dict):
+    """
+     Функция добавляет новый профиль в json файл
+    :param json_file: исходный файл json
+    :param dialect_name: имя диалекта, для которого добавляем профиль
+    :param obj_to_write: объект-содержимое значений для нового профиля
+    :return: None
+    """
+    json_data = get_full_json_data(json_file)
+
+    # Создаем новый объект для профиля
+    json_data[dialect_name][obj_to_write['new_profile_name']] = {}
+
+    # Записываем параметры для нового объкта профиля в объект json_data
+    for key in obj_to_write:
+        # Пропускаем ключ с название профиля
+        if key == 'new_profile_name': continue
+
+        json_data[dialect_name][obj_to_write['new_profile_name']][key] = obj_to_write[key]
+
+    # Записываем новый объект с данными в json_file
+    re_write_json_file(json_file, json_data)
+
+
+def del_profile_from_json(json_file: str, dialect_name: str, profile_name: str):
+    """
+    Функция удаляет из json файла переданный профиль
+
+    :param json_file: исходный файл json
+    :param dialect_name: имя диалекта, для которого удаляем профиль
+    :param profile_name: имя профиля, кототрый удаляем
+    :return: None
+    """
+    # Получаем текущие данные из json файла
+    old_json = get_full_json_data(json_file)
+
+    # Удаляем необходимый профиль
+    del old_json[dialect_name][profile_name]
+
+    # Перезаписываем исходный файл новыми данными
+    re_write_json_file(json_file, old_json)
