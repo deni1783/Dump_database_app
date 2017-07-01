@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from functools import partial
 from Custom_modules.Functions.json_fn import get_profile_settings_value
 from Custom_modules.Functions.json_fn import get_all_profiles
@@ -21,11 +21,28 @@ class Connecting(QtWidgets.QWidget):
 
         """ Кнопки настройки профиля """
         add_profile_btn = QtWidgets.QPushButton('ADD')
-        change_profile_btn = QtWidgets.QPushButton('EDIT')
-        delete_profile_btn = QtWidgets.QPushButton('DELETE')
+        delete_profile_btn = QtWidgets.QPushButton('DEL')
+        edit_profile_btn = QtWidgets.QPushButton('EDIT')
 
         """ Кнопка проверки подключения """
         test_connect_btn = QtWidgets.QPushButton('TEST')
+
+        """ Статус подключения (LABEL)"""
+        status_lbl = QtWidgets.QLabel()
+        # Сначала делаем описание - Not yet tested
+        status_lbl.setToolTip('Not yet tested')
+
+        """ Icons для статуса подключения PIXMAP """
+        success_pix = QtGui.QPixmap("Img/Icons/success.png")
+        error_pix = QtGui.QPixmap("Img/Icons/error.png")
+        question_pix = QtGui.QPixmap("Img/Icons/question.png")
+
+
+
+
+
+        """ Пустой виджет, для отступа """
+        empty_lbl = QtWidgets.QLabel()
 
         """ Заголовки для параметров подключения """
         host_lbl = QtWidgets.QLabel('HOST')
@@ -56,8 +73,8 @@ class Connecting(QtWidgets.QWidget):
         """ Профиль (HBOX) """
         profile_hbox = QtWidgets.QHBoxLayout()
 
-        """ Кнопки настройки профиля (HBOX) """
-        profile_buttons_hbox = QtWidgets.QHBoxLayout()
+        """ Кнопки настройки профиля (GRID) """
+        profile_buttons_grid = QtWidgets.QGridLayout()
 
         """ Параметры подключения (GRID) """
         connecting_string_grid = QtWidgets.QGridLayout()
@@ -70,11 +87,19 @@ class Connecting(QtWidgets.QWidget):
         profile_hbox.addWidget(profile_value_cmbb)
 
         """ Группировка кнопок настройки профиля """
-        profile_buttons_hbox.addWidget(add_profile_btn)
-        profile_buttons_hbox.addWidget(change_profile_btn)
-        profile_buttons_hbox.addWidget(delete_profile_btn)
+        profile_buttons_grid.addWidget(add_profile_btn, 0 ,0)
+        profile_buttons_grid.addWidget(delete_profile_btn, 0, 1)
+        profile_buttons_grid.addWidget(edit_profile_btn, 0, 2)
         # + кнопка тестирования соединения
-        profile_buttons_hbox.addWidget(test_connect_btn)
+        profile_buttons_grid.addWidget(empty_lbl, 0, 3)
+        profile_buttons_grid.addWidget(test_connect_btn, 0, 4)
+
+        # Изначально делаем статус неопределенным
+        status_lbl.setPixmap(question_pix)
+        profile_buttons_grid.addWidget(status_lbl, 0, 5)
+
+
+
 
         """ Группировка параметров подключения """
         # host
@@ -99,8 +124,8 @@ class Connecting(QtWidgets.QWidget):
         """ Обертка для сгруппированных представлений (VBOX) """
         wrap_connect_settings_vbox = QtWidgets.QVBoxLayout()
         wrap_connect_settings_vbox.addLayout(profile_hbox)
-        wrap_connect_settings_vbox.addLayout(profile_buttons_hbox)
         wrap_connect_settings_vbox.addLayout(connecting_string_grid)
+        wrap_connect_settings_vbox.addLayout(profile_buttons_grid)
 
 
 
@@ -109,7 +134,8 @@ class Connecting(QtWidgets.QWidget):
         self.out_gbox = QtWidgets.QGroupBox('Connection settings')
         self.out_gbox.setAlignment(QtCore.Qt.AlignCenter)
         self.out_gbox.setFlat(True)
-        self.out_gbox.setFixedSize(280, 280)
+        # self.out_gbox.setFixedSize(400, 400)
+        self.out_gbox.setFixedSize(300, 280)
         self.out_gbox.setLayout(wrap_connect_settings_vbox)
 
 
@@ -188,6 +214,12 @@ class Connecting(QtWidgets.QWidget):
             new_prof_window.create_profile_wnd.show()
 
         def del_curr_profile(json_file: str, dt_name: str):
+            """
+            Удаляем текущий профиль и перерисовывает элементы в combo box
+            :param json_file: исходный json файл настроек
+            :param dt_name: имя диалекта, для которого удаляем профиль
+            :return: None
+            """
             curr_profile = profile_value_cmbb.currentText()
 
             # Удаляем профиль из json файла
