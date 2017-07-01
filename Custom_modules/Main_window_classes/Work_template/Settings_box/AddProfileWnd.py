@@ -8,8 +8,8 @@ class AddingNewProfileWindow(QtWidgets.QWidget):
     """
         Класс создает окно для добавления нового профиля настроек подлючения
     """
-    def __init__(self, parent, path_to_json: str, dialect_name: str, change_list_profile_func):
-        QtWidgets.QWidget.__init__(self, parent)
+    def __init__(self, path_to_json: str, dialect_name: str, change_list_profile_func):
+        QtWidgets.QWidget.__init__(self)
 
         """ Заголовки для параметров подключения """
         new_profile_lbl = QtWidgets.QLabel('New profile')
@@ -76,7 +76,7 @@ class AddingNewProfileWindow(QtWidgets.QWidget):
 
 
         """ Окно добавления нового профиля """
-        self.create_profile_wnd = QtWidgets.QWidget(parent)
+        self.create_profile_wnd = QtWidgets.QWidget()
         self.create_profile_wnd.setWindowFlags(QtCore.Qt.Tool)
         self.create_profile_wnd.setWindowTitle('New profile')
 

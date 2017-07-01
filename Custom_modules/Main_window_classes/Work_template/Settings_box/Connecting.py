@@ -10,7 +10,7 @@ from Custom_modules.Main_window_classes.Work_template.Settings_box.AddProfileWnd
 
 
 class Connecting(QtWidgets.QWidget):
-    def __init__(self, dialect_name, parent=None):
+    def __init__(self, dialect_name: str, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
 
         """ Создание виджетов """
@@ -201,7 +201,7 @@ class Connecting(QtWidgets.QWidget):
             change_profile(path_to_json, dt_name, curr_prof)
 
         # Показываем окно создания нового профиля
-        def show_create_new_prof_window(parent, path_to_json: str, dt_name: str, init_new_pfofiles_func):
+        def show_create_new_prof_window(path_to_json: str, dt_name: str, init_new_pfofiles_func):
             """
             Функция получает класс создания нового профиля и показывает его
 
@@ -210,7 +210,7 @@ class Connecting(QtWidgets.QWidget):
             :param path_to_json: путь к файлу настроек подключения, что бы записать новые настройки
             :return: None
             """
-            new_prof_window = AddingNewProfileWindow(parent, path_to_json, dt_name, init_new_pfofiles_func)
+            new_prof_window = AddingNewProfileWindow(path_to_json, dt_name, init_new_pfofiles_func)
             new_prof_window.create_profile_wnd.show()
 
         def del_curr_profile(json_file: str, dt_name: str):
@@ -248,7 +248,6 @@ class Connecting(QtWidgets.QWidget):
 
         # При нажатии на кнопку добавить, показываем окно заполнени параметров нового профиля
         add_profile_btn.clicked.connect(partial(show_create_new_prof_window,
-                                                self,
                                                 PATH_TO_PROFILE_SETTINGS_JSON,
                                                 dialect_name,
                                                 init_start_profile_values))

@@ -91,26 +91,19 @@
       "password": "qwerty",
       "database": "DBCS"
     },
-    "asdf": {
-      "host": "asdf",
-      "port": "asdf",
-      "user": "asdf",
-      "password": "asdf",
-      "database": "asdf"
-    },
-    "reqw": {
-      "host": "reqw",
-      "port": "req",
-      "user": "req",
-      "password": "reqw",
-      "database": "rqew"
-    },
     "ds111": {
       "host": "2345.2345.23",
       "port": "12313",
       "database": "sjdfjasfh",
       "user": "ds1111",
       "password": "qwer"
+    },
+    "fsadfg": {
+      "host": "lksadjf",
+      "port": "flkasdf",
+      "database": "fasdklflk",
+      "user": "fs",
+      "password": "lkdf"
     }
   },
   "greenplum": {
