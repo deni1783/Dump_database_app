@@ -13,7 +13,7 @@ class DialectListBox(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self, parent)
 
         # Формируем список необходимых диалектов из файла supported_dialects.json
-        dialects_list = json_fn.get_dialects_from_json(PATH_TO_DIALECTS_LIST_JSON)
+        self.DIALECTS_LIST = json_fn.get_dialects_from_json(PATH_TO_DIALECTS_LIST_JSON)
 
         # Создаем объект где ключ = имя диалекта, а значение = кнопка
         # Для того, что бы в дальнейшем мы могли ставить обработчики на кнопки
@@ -23,6 +23,6 @@ class DialectListBox(QtWidgets.QWidget):
         self.dialects_list_vbox = QtWidgets.QVBoxLayout()
 
         # Заполняем DIALECT_NAME_BTN и dialects_list_vbox
-        for dt_name in dialects_list:
+        for dt_name in self.DIALECTS_LIST:
             self.DIALECT_NAME_BTN[dt_name] = QtWidgets.QPushButton(dt_name)
             self.dialects_list_vbox.addWidget(self.DIALECT_NAME_BTN[dt_name])

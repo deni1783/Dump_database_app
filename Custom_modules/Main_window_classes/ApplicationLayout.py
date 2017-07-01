@@ -4,6 +4,7 @@ from Custom_modules.Main_window_classes.DialectListBox import DialectListBox
 from Custom_modules.Functions.ui_fn import clear_widget
 
 from Dialects.UI_windows import postgresql
+from Dialects.UI_windows import oracle
 
 
 class ApplicationLayout(DialectListBox):
@@ -13,7 +14,8 @@ class ApplicationLayout(DialectListBox):
         # Словарь для присвоения нужных GBOX
         # При добавлении нового диалекта, необходимо добавить ссылку на GBOX для него
         self.dt_name_template = {
-            'postgresql': postgresql.WorkTemplate().out_dialect_gbox
+            'postgresql': postgresql.WorkTemplate().out_dialect_gbox,
+            'oracle': oracle.WorkTemplate().out_dialect_gbox
         }
 
         # Представление для рабочей области
@@ -23,6 +25,10 @@ class ApplicationLayout(DialectListBox):
         # Назначаем функцию для каждой кнопки
         for key in self.DIALECT_NAME_BTN:
             self.DIALECT_NAME_BTN[key].clicked.connect(partial(self.change_content, work_template_vbox, key))
+
+        """ Делаем изначально активной кнопку первого диалекта """
+        # self.DIALECT_NAME_BTN[self.DIALECTS_LIST[0]].click()
+
 
         # Основное представление для приложения
         self.app_hbox = QtWidgets.QHBoxLayout()
