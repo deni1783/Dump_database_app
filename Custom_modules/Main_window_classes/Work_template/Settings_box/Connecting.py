@@ -4,66 +4,7 @@ from Custom_modules.Functions.json_fn import get_profile_settings_value
 from Custom_modules.Functions.json_fn import get_all_profiles
 from Custom_modules.Constants import PATH_TO_PROFILE_SETTINGS_JSON
 
-
-class AddingNewProfileWindow(QtWidgets.QWidget):
-    def __init__(self, path_to_json: str, parent=None):
-        QtWidgets.QWidget.__init__(self, parent)
-
-        """ Заголовки для параметров подключения """
-        new_profile_lbl = QtWidgets.QLabel('New profile')
-
-        host_lbl = QtWidgets.QLabel('HOST')
-        port_lbl = QtWidgets.QLabel('PORT')
-        database_lbl = QtWidgets.QLabel('DATABASE')
-        user_lbl = QtWidgets.QLabel('USER')
-        password_lbl = QtWidgets.QLabel('PASSWORD')
-
-        """ Значения параметров подключения """
-        new_profile_value_ln = QtWidgets.QLineEdit()
-
-        host_value_ln = QtWidgets.QLineEdit()
-        port_value_ln = QtWidgets.QLineEdit()
-        database_value_ln = QtWidgets.QLineEdit()
-        user_value_ln = QtWidgets.QLineEdit()
-        password_value_ln = QtWidgets.QLineEdit()
-
-        """ Параметры подключения (GRID) """
-        connecting_string_grid = QtWidgets.QGridLayout()
-        connecting_string_grid.setAlignment(QtCore.Qt.AlignTop)
-
-
-
-        """ Группировка параметров подключения """
-        # Новый профиль
-        connecting_string_grid.addWidget(new_profile_lbl, 0, 0)
-        connecting_string_grid.addWidget(new_profile_value_ln, 0, 1)
-        # host
-        connecting_string_grid.addWidget(host_lbl, 1, 0)
-        connecting_string_grid.addWidget(host_value_ln, 1, 1)
-        # port
-        connecting_string_grid.addWidget(port_lbl, 2, 0)
-        connecting_string_grid.addWidget(port_value_ln, 2, 1)
-        # database
-        connecting_string_grid.addWidget(database_lbl, 3, 0)
-        connecting_string_grid.addWidget(database_value_ln, 3, 1)
-        # user
-        connecting_string_grid.addWidget(user_lbl, 4, 0)
-        connecting_string_grid.addWidget(user_value_ln, 4, 1)
-        # password
-        connecting_string_grid.addWidget(password_lbl, 5, 0)
-        connecting_string_grid.addWidget(password_value_ln, 5, 1)
-
-
-        create_profile_wnd = QtWidgets.QWidget()
-        # create_profile_wnd.setWindowFlags(QtCore.Qt.Tool)
-        create_profile_wnd.setWindowTitle('New profile')
-
-        create_profile_wnd.setLayout(connecting_string_grid)
-
-
-
-
-
+from Custom_modules.Main_window_classes.Work_template.Settings_box.AddProfileWnd import AddingNewProfileWindow
 
 
 
@@ -167,7 +108,7 @@ class Connecting(QtWidgets.QWidget):
         self.out_gbox = QtWidgets.QGroupBox('Connection settings')
         self.out_gbox.setAlignment(QtCore.Qt.AlignCenter)
         self.out_gbox.setFlat(True)
-        self.out_gbox.setFixedSize(250, 200)
+        self.out_gbox.setFixedSize(280, 280)
         self.out_gbox.setLayout(wrap_connect_settings_vbox)
 
 
@@ -229,10 +170,9 @@ class Connecting(QtWidgets.QWidget):
             curr_prof = profile_value_cmbb.currentText()
             change_profile(path_to_json, dt_name, curr_prof)
 
-        def show_create_new_prof_window(path_to_json: str):
-            window = AddingNewProfileWindow(path_to_json)
-            window.show()
-
+        def show_create_new_prof_window(parent, path_to_json: str):
+            new_prof_window = AddingNewProfileWindow(parent, path_to_json)
+            new_prof_window.create_profile_wnd.show()
 
         """ Записываем значения профилей в profile_value_cmbb """
         # Запускаем init_start_profile_values
@@ -250,4 +190,4 @@ class Connecting(QtWidgets.QWidget):
         profile_value_cmbb.activated[str].connect(partial(change_profile, PATH_TO_PROFILE_SETTINGS_JSON, dialect_name))
 
         # При нажатии на кнопку добавить, показываем окно заполнени параметров нового профиля
-        add_profile_btn.clicked.connect(partial(show_create_new_prof_window, PATH_TO_PROFILE_SETTINGS_JSON))
+        add_profile_btn.clicked.connect(partial(show_create_new_prof_window, self, PATH_TO_PROFILE_SETTINGS_JSON))
