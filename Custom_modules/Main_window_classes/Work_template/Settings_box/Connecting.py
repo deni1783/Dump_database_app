@@ -131,12 +131,11 @@ class Connecting(QtWidgets.QWidget):
 
 
         """ Основной группирированный бокс (GBOX) """
-        self.out_gbox = QtWidgets.QGroupBox('Connection settings')
-        self.out_gbox.setAlignment(QtCore.Qt.AlignCenter)
-        self.out_gbox.setFlat(True)
-        # self.out_gbox.setFixedSize(400, 400)
-        self.out_gbox.setFixedSize(300, 280)
-        self.out_gbox.setLayout(wrap_connect_settings_vbox)
+        self.connecting_settings_out_gbox = QtWidgets.QGroupBox('Connection settings')
+        self.connecting_settings_out_gbox.setAlignment(QtCore.Qt.AlignCenter)
+        self.connecting_settings_out_gbox.setFlat(True)
+        self.connecting_settings_out_gbox.setFixedSize(300, 280)
+        self.connecting_settings_out_gbox.setLayout(wrap_connect_settings_vbox)
 
 
 
