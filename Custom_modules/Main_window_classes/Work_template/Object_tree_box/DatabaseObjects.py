@@ -165,34 +165,34 @@ class DatabaseObjectTree(QtWidgets.QWidget):
         self.db_object_tree_out_box.setLayout(wrap_tree_vbox)
 
 
-    def get_selected_items(self):
+    def get_selected_items(self, top_lvl_item: str):
 
-        all_children = []
+        all_children_arr = []
 
         # Получаем элемент верхнего уровня для всего дерева
         root = self.objects_tree.topLevelItem(0)
 
+        # Обход всего дерева и заполнение массива all_children_arr
         for i in range(root.childCount()):
-            result_str = ''
-
             first_item = root.child(i)
-            # Если он чекнут
             if first_item.checkState(0) != 0:
-                result_str += first_item.text(0) + '^'
+                # Ключ для базы/схемы
+                first_str = first_item.text(0)
 
                 for j in range(first_item.childCount()):
                     second_item = first_item.child(j)
                     if second_item.checkState(0) != 0:
-                        result_str += second_item.text(0) + '>'
+                        # Ключ для схемы/таблицы
+                        second_str = second_item.text(0)
 
+                        if second_item.childCount() != 0:
+                            for k in range(second_item.childCount()):
+                                third_item = second_item.child(k)
+                                if third_item.checkState(0) != 0:
+                                    # Ключ для таблицы
+                                    third_str = third_item.text(0)
+                                    all_children_arr.append(first_str + '.' + second_str + '.' + third_str)
+                        elif top_lvl_item != 'database':
+                            all_children_arr.append(first_str + '.' + second_str)
 
-
-                        for k in range(second_item.childCount()):
-                            third_item = second_item.child(k)
-                            if third_item.checkState(0) != 0:
-                                result_str += third_item.text(0) + '|'
-                        all_children.append(result_str)
-            # all_children.append(result_str)
-
-        print(all_children)
-
+        return all_children_arr
