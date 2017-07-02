@@ -51,7 +51,6 @@ class ApplicationLayout(DialectListBox):
         :param dt_name: имя диалекта
         :return: None
         """
-        print(dt_name)
 
         # Очищаем виджет
         clear_widget(dist_layout)

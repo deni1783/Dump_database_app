@@ -35,3 +35,4 @@ class ObjectTreeWindow(DatabaseObjectTree, RunDumButtons):
         self.object_tree_window_out_gbox.setAlignment(QtCore.Qt.AlignHCenter)
 
         self.object_tree_window_out_gbox.setLayout(wrap_vbox)
+

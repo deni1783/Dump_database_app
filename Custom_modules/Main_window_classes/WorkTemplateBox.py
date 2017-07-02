@@ -63,3 +63,6 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
         self.work_template_out_gbox.setFlat(True)
 
         self.work_template_out_gbox.setLayout(full_wrap)
+
+
+
