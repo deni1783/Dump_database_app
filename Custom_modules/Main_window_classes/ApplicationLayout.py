@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from functools import partial
 from Custom_modules.Main_window_classes.DialectListBox import DialectListBox
 from Custom_modules.Functions.ui_fn import clear_widget
@@ -22,6 +22,10 @@ class ApplicationLayout(DialectListBox):
         # Реализованно именно отдельным представлением, т.к. его необходимо очищать
         work_template_vbox = QtWidgets.QVBoxLayout()
 
+        wrap_wort_template_gbox = QtWidgets.QGroupBox()
+        wrap_wort_template_gbox.setFlat(True)
+        wrap_wort_template_gbox.setLayout(work_template_vbox)
+
         # Назначаем функцию для каждой кнопки
         for key in self.DIALECT_NAME_BTN:
             self.DIALECT_NAME_BTN[key].clicked.connect(partial(self.change_content, work_template_vbox, key))
@@ -30,10 +34,13 @@ class ApplicationLayout(DialectListBox):
         # self.DIALECT_NAME_BTN[self.DIALECTS_LIST[0]].click()
 
 
+
         # Основное представление для приложения
         self.app_hbox = QtWidgets.QHBoxLayout()
-        self.app_hbox.addLayout(self.dialects_list_vbox)
-        self.app_hbox.addLayout(work_template_vbox)
+        self.app_hbox.setAlignment(QtCore.Qt.AlignLeft)
+
+        self.app_hbox.addWidget(self.dialect_list_gbox)
+        self.app_hbox.addWidget(wrap_wort_template_gbox)
 
         self.setLayout(self.app_hbox)
 

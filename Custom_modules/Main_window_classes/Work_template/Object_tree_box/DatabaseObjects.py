@@ -13,6 +13,7 @@ class DatabaseObjectTree(QtWidgets.QWidget):
 
         """ Создаем виджет дерева """
         self.objects_tree = QtWidgets.QTreeWidget()
+        self.objects_tree.setMinimumWidth(500)
 
         self.objects_tree.setHeaderLabel('Objects')
         self.objects_tree.setSortingEnabled(True)
@@ -166,6 +167,13 @@ class DatabaseObjectTree(QtWidgets.QWidget):
 
 
     def get_selected_items(self, top_lvl_item: str):
+        """
+        Функция проходит все дерево и формирует массив со всеми выбранными элементами
+        Глобальная функция!
+
+        :param top_lvl_item: тип элемента верхнего уровня, для корректной обработки
+        :return: list
+        """
 
         all_children_arr = []
 

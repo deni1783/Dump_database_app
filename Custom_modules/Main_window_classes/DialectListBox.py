@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from Custom_modules.Functions import json_fn
 from Custom_modules.Constants import PATH_TO_DIALECTS_LIST_JSON
 
@@ -20,9 +20,19 @@ class DialectListBox(QtWidgets.QWidget):
         self.DIALECT_NAME_BTN = {}
 
         # Создаем вертикальное представление в которое будем добавлять кнопки
-        self.dialects_list_vbox = QtWidgets.QVBoxLayout()
+        dialects_list_vbox = QtWidgets.QVBoxLayout()
+        dialects_list_vbox.setAlignment(QtCore.Qt.AlignTop)
 
         # Заполняем DIALECT_NAME_BTN и dialects_list_vbox
         for dt_name in self.DIALECTS_LIST:
             self.DIALECT_NAME_BTN[dt_name] = QtWidgets.QPushButton(dt_name)
-            self.dialects_list_vbox.addWidget(self.DIALECT_NAME_BTN[dt_name])
+            dialects_list_vbox.addWidget(self.DIALECT_NAME_BTN[dt_name])
+
+
+
+        """ GBOX для приложения """
+        self.dialect_list_gbox = QtWidgets.QGroupBox('Dialects')
+        self.dialect_list_gbox.setFlat(True)
+        self.dialect_list_gbox.setAlignment(QtCore.Qt.AlignHCenter)
+
+        self.dialect_list_gbox.setLayout(dialects_list_vbox)
