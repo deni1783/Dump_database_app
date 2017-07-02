@@ -42,6 +42,7 @@ class Dump(QtWidgets.QWidget):
 
         """ Обертка для сгруппированных представлений (VBOX) """
         wrap_dump_setting_vbox = QtWidgets.QVBoxLayout()
+        wrap_dump_setting_vbox.setAlignment(QtCore.Qt.AlignTop)
         wrap_dump_setting_vbox.addLayout(type_dump_hbox)
         wrap_dump_setting_vbox.addLayout(self.custom_settings_for_dump_vbox)
 

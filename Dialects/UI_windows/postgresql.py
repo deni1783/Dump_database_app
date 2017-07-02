@@ -1,6 +1,8 @@
 from PyQt5 import QtWidgets
 from Custom_modules.Main_window_classes.WorkTemplateBox import BaseWorkTemplateWindow
 from Dialects.Queries import postgresql
+from functools import partial
+
 
 class WorkTemplate(BaseWorkTemplateWindow):
     def __init__(self):
@@ -14,6 +16,9 @@ class WorkTemplate(BaseWorkTemplateWindow):
             query_load_tables=postgresql.load_tables
         )
 
+
+        """ Обработка сигналов """
+        self.run_dump_btn.clicked.connect(partial(self.get_selected_items))
 
 
         # Возвращаем в основной макет

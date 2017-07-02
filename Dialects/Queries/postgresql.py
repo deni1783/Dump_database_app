@@ -12,7 +12,7 @@ def load_databases(connect_param: dict = None):
     return out_arr
 
 
-def load_schemes(connect_param: dict =None, db_name: str = None):
+def load_schemes(connect_param: dict = None, db_name: str = None):
     out_arr = [
         db_name + '_schema1',
         db_name + '_schema2',
@@ -23,7 +23,7 @@ def load_schemes(connect_param: dict =None, db_name: str = None):
     return out_arr
 
 
-def load_tables(connect_param: dict =None, db_name: str = None, schema_name: str = None):
+def load_tables(connect_param: dict = None, db_name: str = None, schema_name: str = None):
     out_arr = [
         schema_name + '_table1',
         schema_name + '_table2',

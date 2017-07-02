@@ -12,12 +12,12 @@ class DatabaseObjectTree(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self)
 
         """ Создаем виджет дерева """
-        objects_tree = QtWidgets.QTreeWidget()
+        self.objects_tree = QtWidgets.QTreeWidget()
 
-        objects_tree.setHeaderLabel('Objects')
-        objects_tree.setSortingEnabled(True)
-        objects_tree.sortByColumn(0, QtCore.Qt.AscendingOrder)  # Сортировка
-        objects_tree.setAnimated(True)
+        self.objects_tree.setHeaderLabel('Objects')
+        self.objects_tree.setSortingEnabled(True)
+        self.objects_tree.sortByColumn(0, QtCore.Qt.AscendingOrder)  # Сортировка
+        self.objects_tree.setAnimated(True)
 
 
 
@@ -25,11 +25,11 @@ class DatabaseObjectTree(QtWidgets.QWidget):
         top_item = QtWidgets.QTreeWidgetItem()
         top_item.setText(0, top_lvl_item)
 
-        objects_tree.addTopLevelItem(top_item)
+        self.objects_tree.addTopLevelItem(top_item)
 
 
         wrap_tree_vbox = QtWidgets.QVBoxLayout()
-        wrap_tree_vbox.addWidget(objects_tree)
+        wrap_tree_vbox.addWidget(self.objects_tree)
 
 
         """ Создаем функции для обработки сигналов """
@@ -118,14 +118,11 @@ class DatabaseObjectTree(QtWidgets.QWidget):
 
             # Получаем тип нажатого элемента
             curr_item_type = get_item_type(curr_item, top_lvl_item)
-            print(curr_item_type)
 
 
             # Выбираем нужную функцию и параметры к ней в зависимости от типа родителя
-
             # Когда curr_item_type == table or curr_item_type == unknown
             # children_arr остается пустым массивом и детей мы не добавляем
-
             children_arr = []
             if curr_item_type == 'top_level':
                 # Для диалектов у которого верхний уровень - БАЗА
@@ -152,15 +149,50 @@ class DatabaseObjectTree(QtWidgets.QWidget):
 
 
 
-
-
         """ Добавляем обработку событий """
-        objects_tree.itemDoubleClicked.connect(partial(on_doubleclick_tree_item,
-                                                       objects_tree,
-                                                       query_load_databases,
-                                                       query_load_schemes,
-                                                       query_load_tables
-                                                       ))
+
+        # При двойном нажатии на элемент дерева
+        self.objects_tree.itemDoubleClicked.connect(partial(on_doubleclick_tree_item,
+                                                    self.objects_tree,
+                                                    query_load_databases,
+                                                    query_load_schemes,
+                                                    query_load_tables
+                                                    ))
+
+
 
         self.db_object_tree_out_box = QtWidgets.QGroupBox()
         self.db_object_tree_out_box.setLayout(wrap_tree_vbox)
+
+
+    def get_selected_items(self):
+
+        all_children = []
+
+        # Получаем элемент верхнего уровня для всего дерева
+        root = self.objects_tree.topLevelItem(0)
+
+        for i in range(root.childCount()):
+            result_str = ''
+
+            first_item = root.child(i)
+            # Если он чекнут
+            if first_item.checkState(0) != 0:
+                result_str += first_item.text(0) + '^'
+
+                for j in range(first_item.childCount()):
+                    second_item = first_item.child(j)
+                    if second_item.checkState(0) != 0:
+                        result_str += second_item.text(0) + '>'
+
+
+
+                        for k in range(second_item.childCount()):
+                            third_item = second_item.child(k)
+                            if third_item.checkState(0) != 0:
+                                result_str += third_item.text(0) + '|'
+                        all_children.append(result_str)
+            # all_children.append(result_str)
+
+        print(all_children)
+

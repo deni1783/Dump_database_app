@@ -27,7 +27,9 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow):
 
         # Окно настроек
         work_template_hbox.addWidget(self.settings_window_out_gbox)
-        work_template_hbox.addWidget(self.db_object_tree_out_box)
+
+        # Окно дерева
+        work_template_hbox.addWidget(self.object_tree_window_out_gbox)
 
 
         """ Базовий GBOX для приложения """
