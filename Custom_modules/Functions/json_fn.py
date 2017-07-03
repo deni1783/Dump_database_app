@@ -121,3 +121,59 @@ def del_profile_from_json(json_file: str, dialect_name: str, profile_name: str):
 
     # Перезаписываем исходный файл новыми данными
     re_write_json_file(json_file, old_json)
+
+
+def add_or_change_default_objects(json_file: str, top_lvl_item_type: str, dialect_name: str, profile_name: str, objects_list: list):
+
+
+
+
+    # Преобразуем массив в нормализированные объект
+    normalize_objects = {}
+
+    if top_lvl_item_type == 'database':
+        # database.schema.table
+        for i in objects_list:
+            split_str = i.split('.')
+            db = split_str[0]
+            schema = split_str[1]
+            table = split_str[2]
+
+            # Если такой БД еще не было
+            if db not in normalize_objects:
+                normalize_objects[db] = {}
+
+            # Если такой СХЕМЫ еще не было
+            if schema not in normalize_objects[db]:
+                normalize_objects[db][schema] = []
+
+            # Добавляем таблицы
+            normalize_objects[db][schema].append(table)
+
+    elif top_lvl_item_type == 'schema':
+        # schema.table
+        for i in objects_list:
+            split_str = i.split('.')
+            schema = split_str[0]
+            table = split_str[1]
+
+            # Если такой СХЕМЫ еще не было
+            if not normalize_objects[schema]:
+                normalize_objects[schema] = []
+
+            # Добавляем таблицы
+            normalize_objects[schema].append(table)
+
+    json_data = get_full_json_data(json_file)
+
+
+    # Если нужно создаем объекты
+    if dialect_name not in json_data:
+        json_data[dialect_name] = {}
+    if profile_name not in json_data[dialect_name]:
+        json_data[dialect_name][profile_name] = {}
+
+
+    # Записываем или перезаписываем данные
+    json_data[dialect_name][profile_name] = normalize_objects
+    re_write_json_file(json_file, json_data)

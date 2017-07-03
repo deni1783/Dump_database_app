@@ -1,0 +1,27 @@
+{
+  "postgresql": {
+    "ds111": {
+      "DBCS_BIG_TABLES": {
+        "DBCS_BIG_TABLES": [
+          "all_types_redshift_10t",
+          "all_types_redshift_1m_add",
+          "F_ACCOUNT_TRANSACTION_45MB"
+        ]
+      },
+      "DBCS_D_AZURE": {
+        "DBCS_D_AZURE": [
+          "binarystrings",
+          "characterstrings"
+        ]
+      }
+    },
+    "prod": {
+      "DBCS_BIG_TABLES": {
+        "DBCS_BIG_TABLES": [
+          "all_types_redshift_10t",
+          "all_types_redshift_1m"
+        ]
+      }
+    }
+  }
+}

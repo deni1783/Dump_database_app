@@ -1,7 +1,10 @@
 from PyQt5 import QtWidgets, QtCore
+from functools import partial
 from Custom_modules.Main_window_classes.Work_template.SettingsBox import SettingsWindow
 from Custom_modules.Main_window_classes.Work_template.ObjectTreeBox import ObjectTreeWindow
 from Custom_modules.Main_window_classes.Work_template.LogBox import LogTextEdit
+from Custom_modules.Functions.json_fn import add_or_change_default_objects
+from Custom_modules.Constants import PATH_TO_DEFAULT_OBJECTS_JSON
 
 
 class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
@@ -68,3 +71,25 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
 
 
 
+        """ Обработка событий """
+        self.save_as_default.clicked.connect(partial(self.save_as_default_object_list,
+                                                     PATH_TO_DEFAULT_OBJECTS_JSON,
+                                                     type_of_top_item,
+                                                     dialect_name
+                                                     ))
+
+        self.choose_default_obj_btn.clicked.connect(partial(self.load_default_objects))
+
+
+
+    def save_as_default_object_list(self, path_to_json: str, top_lvl_item: str, dialect_name: str):
+        curr_prof_name = self.profile_value_cmbb.currentText()
+        selected_objects = self.get_selected_items(top_lvl_item)
+
+        # Если не было выбранно ни одного объекта, ничего не делаем
+        if not selected_objects:
+            return
+        add_or_change_default_objects(path_to_json, top_lvl_item, dialect_name, curr_prof_name, selected_objects)
+
+    def load_default_objects(self, path_to_json: str, top_lvl_item: str, dialect_name: str):
+        curr_prof_name = self.profile_value_cmbb.currentText()
