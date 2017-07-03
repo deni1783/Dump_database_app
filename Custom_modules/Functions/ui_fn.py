@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 
 def clear_widget(obj):
     """
@@ -40,3 +40,18 @@ def show_error_msg_window(error_title: str, message_text: str, parent=None):
     error_msg.setWindowTitle(error_title)
     error_msg.showMessage(message_text)
     error_msg.show()
+
+
+
+def change_cursor(cursor_type: str):
+    """
+    Изменение фнешнего вида курсора
+    :param cursor_type: тип курсора: wait, normal
+    :return: None
+    """
+    if cursor_type == 'wait':
+        # Изменяем курсор в песочные часы
+        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
+    elif cursor_type == 'normal':
+        # Возвращаем обычный курсор
+        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.ArrowCursor)

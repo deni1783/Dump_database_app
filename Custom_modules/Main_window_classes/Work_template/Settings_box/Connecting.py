@@ -5,7 +5,7 @@ from Custom_modules.Functions.json_fn import get_profile_settings_value
 from Custom_modules.Functions.json_fn import get_all_profiles
 from Custom_modules.Functions.json_fn import del_profile_from_json
 from Custom_modules.Constants import PATH_TO_PROFILE_SETTINGS_JSON
-from Custom_modules.Functions.ui_fn import show_error_msg_window, move_widget_to_center
+from Custom_modules.Functions.ui_fn import show_error_msg_window, change_cursor
 
 from Custom_modules.Main_window_classes.Work_template.Settings_box.AddProfileWnd import AddingNewProfileWindow
 
@@ -171,6 +171,10 @@ class Connecting(QtWidgets.QWidget):
             :return: None
             """
 
+            # Изменяем иконку подключения
+            self.status_lbl.setPixmap(self.question_pix)
+            self.status_lbl.setToolTip('Not yet tested')
+
             # Заполнаем объект новыми значениями из полученного профиля
             new_prof_settings = get_profile_settings_value(path_to_json, dt_name, new_prof)
 
@@ -271,6 +275,8 @@ class Connecting(QtWidgets.QWidget):
         :param query_for_test: Имя профиля настроек
         :return: None
         """
+        change_cursor('wait')
+
         curr_prof_name = self.profile_value_cmbb.currentText()
         curr_settings = get_profile_settings_value(path_to_json, dialect_name, curr_prof_name)
 
@@ -279,7 +285,9 @@ class Connecting(QtWidgets.QWidget):
             query_for_test(curr_settings)
             self.status_lbl.setPixmap(self.success_pix)
             self.status_lbl.setToolTip('Connected')
+            change_cursor('normal')
         except:
             self.status_lbl.setPixmap(self.error_pix)
             self.status_lbl.setToolTip(sys.exc_info()[1].args[0])
+            change_cursor('normal')
             show_error_msg_window('Connection failed!', sys.exc_info()[1].args[0], self)
