@@ -4,6 +4,9 @@ from functools import partial
 from Custom_modules.Functions.json_fn import write_new_profile_to_json
 from Custom_modules.Functions.ui_fn import show_error_msg_window
 
+
+
+
 class AddingNewProfileWindow(QtWidgets.QWidget):
     """
         Класс создает окно для добавления нового профиля настроек подлючения
