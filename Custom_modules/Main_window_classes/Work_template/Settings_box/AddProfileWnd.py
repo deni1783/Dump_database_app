@@ -2,13 +2,13 @@ from PyQt5 import QtWidgets, QtCore
 from functools import partial
 # from Custom_modules.Constants import PATH_TO_PROFILE_SETTINGS_JSON
 from Custom_modules.Functions.json_fn import write_new_profile_to_json
-
+from Custom_modules.Functions.ui_fn import show_error_msg_window
 
 class AddingNewProfileWindow(QtWidgets.QWidget):
     """
         Класс создает окно для добавления нового профиля настроек подлючения
     """
-    def __init__(self, path_to_json: str, dialect_name: str, change_list_profile_func):
+    def __init__(self, parent, path_to_json: str, dialect_name: str, change_list_profile_func):
         QtWidgets.QWidget.__init__(self)
 
         """ Заголовки для параметров подключения """
@@ -103,10 +103,29 @@ class AddingNewProfileWindow(QtWidgets.QWidget):
 
 
         """ Объявление функции для обработки нажатий """
-        def saved_new_profile():
-            print('pressed save')
+        def saved_new_profile(parent):
+            """
+            Функция сохраняет введенные значения для нового профиля в файл connection_profiles.json
+
+            :param parent: родитель для окна ошибки
+            :return: None
+            """
             # Получаем новые настройки
             new_settings = get_settings()
+
+            # Проверяем что HOST, USER и new_profile_name заполнены
+            if not new_settings['new_profile_name'] or not new_settings['host'] or not new_settings['port']:
+                err_msg = ''
+                if not new_settings['new_profile_name']:
+                    err_msg += 'The field "New profile" is not filled!\n'
+                if not new_settings['host']:
+                    err_msg += 'The field "HOST" is not filled!\n'
+                if not new_settings['port']:
+                    err_msg += 'The field "PORT" is not filled!\n'
+
+                # Показываем окно ошибки и завершаем функцию
+                show_error_msg_window('Fields of the form are not filled', err_msg, parent)
+                return
 
             # Записываем настройки в файл
             write_new_profile_to_json(path_to_json, dialect_name, new_settings)
@@ -118,7 +137,6 @@ class AddingNewProfileWindow(QtWidgets.QWidget):
             self.create_profile_wnd.close()
 
         def cancel():
-            print('pressed cancel')
             # Закрываем окно
             self.create_profile_wnd.close()
 
@@ -126,7 +144,7 @@ class AddingNewProfileWindow(QtWidgets.QWidget):
         """ Обработка нажатий на кнопки """
 
         # Сохранить новый профиль
-        save_btn.clicked.connect(partial(saved_new_profile))
+        save_btn.clicked.connect(partial(saved_new_profile, parent))
 
         # Отменить
         cancel_btn.clicked.connect(partial(cancel))

@@ -89,6 +89,10 @@ def write_new_profile_to_json(json_file: str, dialect_name: str, obj_to_write: d
     # Создаем новый объект для профиля
     json_data[dialect_name][obj_to_write['new_profile_name']] = {}
 
+    # Если значения для порта не указано, вставляем '[default]'
+    if not obj_to_write['port']:
+        obj_to_write['port'] = '[default]'
+
     # Записываем параметры для нового объкта профиля в объект json_data
     for key in obj_to_write:
         # Пропускаем ключ с название профиля

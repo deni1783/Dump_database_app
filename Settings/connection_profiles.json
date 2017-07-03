@@ -104,6 +104,20 @@
       "database": "fasdklflk",
       "user": "fs",
       "password": "lkdf"
+    },
+    "Prod": {
+      "host": "VM-DBA-2008R2-5",
+      "port": "",
+      "database": "postgres",
+      "user": "qa",
+      "password": "qa"
+    },
+    "test_def_port": {
+      "host": "192.168.1.1",
+      "port": "[default]",
+      "database": "test_db",
+      "user": "denis",
+      "password": "qwerty"
     }
   },
   "greenplum": {
