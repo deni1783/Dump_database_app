@@ -147,10 +147,13 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
         # Если нет сохраненных объектов показываем окно ошибки и ничего не делаем
         if dialect_name not in full_json_data:
             show_error_msg_window('Empty objects list', 'There are no saved items for this dialect', self)
+            change_cursor('normal')
             return
         if curr_prof_name not in full_json_data[dialect_name]:
             show_error_msg_window('Empty objects list', 'There are no saved items for this profile', self)
+            change_cursor('normal')
             return
+
 
         profile_json_data = full_json_data[dialect_name][curr_prof_name]
         connection_settings = get_profile_settings_value(path_to_profile_conn_settings, dialect_name, curr_prof_name)
@@ -160,6 +163,7 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
             test_connection(connection_settings)
         except:
             show_error_msg_window('Connection Error', sys.exc_info()[1].args[0], self)
+            change_cursor('normal')
             return
 
         # Верхний элемент дерева
