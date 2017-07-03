@@ -254,9 +254,11 @@ class Connecting(QtWidgets.QWidget):
             self.status_lbl.setToolTip('Connected')
             # Изменение курсора в вид ОБЫЧНЫЙ
             change_cursor('normal')
+            return True
         except:
             self.status_lbl.setPixmap(self.error_pix)
             self.status_lbl.setToolTip(sys.exc_info()[1].args[0])
             # Изменение курсора в вид ОБЫЧНЫЙ
             change_cursor('normal')
             show_error_msg_window('Connection failed!', sys.exc_info()[1].args[0], self)
+            return False

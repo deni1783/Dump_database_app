@@ -3,7 +3,7 @@ import sys
 from functools import partial
 from Custom_modules.Functions.json_fn import get_profile_settings_value
 from Custom_modules.Functions.ui_fn import show_error_msg_window, change_cursor
-from Custom_modules.Constants import PATH_TO_PROFILE_SETTINGS_JSON
+from Custom_modules.Constants import PATH_TO_PROFILE_SETTINGS_JSON, DIALECTS_FOR_CHANGE_DB_IN_QUERIES
 
 
 
@@ -79,7 +79,7 @@ class DatabaseObjectTree(QtWidgets.QWidget):
 
                 # Для этих диалектов запросы необходимо запускать из друго БД,
                 # для этого меняем значение DATABASE в строке подключения
-                if dialect_name in ('postgresql', 'greenplum'):
+                if dialect_name in DIALECTS_FOR_CHANGE_DB_IN_QUERIES:
                     current_connection_settings['database'] = curr_item_text
 
                 if curr_item_type == 'database':
@@ -231,3 +231,7 @@ class DatabaseObjectTree(QtWidgets.QWidget):
             # child.setIcon(0, QtGui.QIcon("icons/{}.png".format(item_type)))
             child.setFlags(child.flags() | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
             child.setCheckState(0, QtCore.Qt.Unchecked)
+
+
+    def set_children_checked(self, parent_item, children: list):
+        print(self)

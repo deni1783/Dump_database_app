@@ -18,10 +18,27 @@
     "prod": {
       "DBCS_BIG_TABLES": {
         "DBCS_BIG_TABLES": [
-          "all_types_redshift_10t",
-          "all_types_redshift_1m"
+          "all_types_redshift_1m_add"
+        ]
+      },
+      "DBCS_D_AZURE_DW": {
+        "DBCS_D_AZURE_DW": [
+          "approximatenumerics",
+          "characterstrings"
         ]
       }
+    }
+  },
+  "redshift": {
+    "second_cluster": {
+      "dbcs_d_azure": [
+        "exactintegernumerics",
+        "othertypes"
+      ],
+      "dbcs_d_greenplum": [
+        "characterstrings",
+        "exactdecimalnumerics"
+      ]
     }
   }
 }

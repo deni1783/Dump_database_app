@@ -11,6 +11,7 @@ def get_full_json_data(json_file: str):
     full_data = open(json_file).read()
     return json.loads(full_data)
 
+
 def re_write_json_file(json_file: str, new_json_data: dict):
     """
      Полностью перезаписывает файл json
@@ -21,9 +22,6 @@ def re_write_json_file(json_file: str, new_json_data: dict):
     """
     json.dump(new_json_data, open(json_file, 'w'), indent=2)
 
-
-
-""" для DialectListBox """
 
 def get_dialects_from_json(json_file: str):
     """
@@ -41,11 +39,6 @@ def get_dialects_from_json(json_file: str):
         dialects.append(dt_name)
 
     return dialects
-
-
-
-""" Работа с профилями настроек подключения """
-
 
 
 def get_profile_settings_value(json_file: str, dialect_name: str, profile_name: str):
@@ -158,7 +151,7 @@ def add_or_change_default_objects(json_file: str, top_lvl_item_type: str, dialec
             table = split_str[1]
 
             # Если такой СХЕМЫ еще не было
-            if not normalize_objects[schema]:
+            if schema not in normalize_objects:
                 normalize_objects[schema] = []
 
             # Добавляем таблицы

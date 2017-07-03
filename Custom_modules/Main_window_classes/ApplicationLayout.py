@@ -5,6 +5,7 @@ from Custom_modules.Functions.ui_fn import clear_widget
 
 from Dialects.UI_windows import postgresql
 from Dialects.UI_windows import oracle
+from Dialects.UI_windows import redshift
 
 
 class ApplicationLayout(DialectListBox):
@@ -15,7 +16,8 @@ class ApplicationLayout(DialectListBox):
         # При добавлении нового диалекта, необходимо добавить ссылку на GBOX для него
         self.dt_name_template = {
             'postgresql': postgresql.WorkTemplate().out_dialect_gbox,
-            'oracle': oracle.WorkTemplate().out_dialect_gbox
+            'oracle': oracle.WorkTemplate().out_dialect_gbox,
+            'redshift': redshift.WorkTemplate().out_dialect_gbox
         }
 
         # Представление для рабочей области
