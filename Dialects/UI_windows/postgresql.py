@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets
+from Custom_modules.Constants import PATH_TO_PROFILE_SETTINGS_JSON
 from Custom_modules.Main_window_classes.WorkTemplateBox import BaseWorkTemplateWindow
 from Dialects.Queries import postgresql
 from functools import partial
@@ -34,6 +35,12 @@ class WorkTemplate(BaseWorkTemplateWindow):
                                                   self.DIALECT_SETTINGS_OBJ['type_of_top_item']
                                                   ))
 
+        # Проверка подключения (по нажатию кнопки TEST)
+        self.test_connect_btn.clicked.connect(partial(self.test_connection,
+                                                      PATH_TO_PROFILE_SETTINGS_JSON,
+                                                      self.DIALECT_SETTINGS_OBJ['dialect_name'],
+                                                      self.DIALECT_SETTINGS_OBJ['test_connection']
+                                                      ))
 
         # Возвращаем в основной макет
         self.out_dialect_gbox = self.work_template_out_gbox

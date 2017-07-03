@@ -1,9 +1,11 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
+import sys
 from functools import partial
 from Custom_modules.Functions.json_fn import get_profile_settings_value
 from Custom_modules.Functions.json_fn import get_all_profiles
 from Custom_modules.Functions.json_fn import del_profile_from_json
 from Custom_modules.Constants import PATH_TO_PROFILE_SETTINGS_JSON
+from Custom_modules.Functions.ui_fn import show_error_msg_window, move_widget_to_center
 
 from Custom_modules.Main_window_classes.Work_template.Settings_box.AddProfileWnd import AddingNewProfileWindow
 
@@ -17,7 +19,7 @@ class Connecting(QtWidgets.QWidget):
 
         """ Профиль """
         profile_lbl = QtWidgets.QLabel('Current profile:')
-        profile_value_cmbb = QtWidgets.QComboBox()
+        self.profile_value_cmbb = QtWidgets.QComboBox()
 
         """ Кнопки настройки профиля """
         add_profile_btn = QtWidgets.QPushButton('ADD')
@@ -25,17 +27,17 @@ class Connecting(QtWidgets.QWidget):
         edit_profile_btn = QtWidgets.QPushButton('EDIT')
 
         """ Кнопка проверки подключения """
-        test_connect_btn = QtWidgets.QPushButton('TEST')
+        self.test_connect_btn = QtWidgets.QPushButton('TEST')
 
         """ Статус подключения (LABEL)"""
-        status_lbl = QtWidgets.QLabel()
+        self.status_lbl = QtWidgets.QLabel()
         # Сначала делаем описание - Not yet tested
-        status_lbl.setToolTip('Not yet tested')
+        self.status_lbl.setToolTip('Not yet tested')
 
         """ Icons для статуса подключения PIXMAP """
-        success_pix = QtGui.QPixmap("Img/Icons/success.png")
-        error_pix = QtGui.QPixmap("Img/Icons/error.png")
-        question_pix = QtGui.QPixmap("Img/Icons/question.png")
+        self.success_pix = QtGui.QPixmap("Img/Icons/success.png")
+        self.error_pix = QtGui.QPixmap("Img/Icons/error.png")
+        self.question_pix = QtGui.QPixmap("Img/Icons/question.png")
 
 
 
@@ -84,7 +86,7 @@ class Connecting(QtWidgets.QWidget):
 
         """ Группировка профиля """
         profile_hbox.addWidget(profile_lbl)
-        profile_hbox.addWidget(profile_value_cmbb)
+        profile_hbox.addWidget(self.profile_value_cmbb)
 
         """ Группировка кнопок настройки профиля """
         profile_buttons_grid.addWidget(add_profile_btn, 0 ,0)
@@ -92,11 +94,11 @@ class Connecting(QtWidgets.QWidget):
         profile_buttons_grid.addWidget(edit_profile_btn, 0, 2)
         # + кнопка тестирования соединения
         profile_buttons_grid.addWidget(empty_lbl, 0, 3)
-        profile_buttons_grid.addWidget(test_connect_btn, 0, 4)
+        profile_buttons_grid.addWidget(self.test_connect_btn, 0, 4)
 
         # Изначально делаем статус неопределенным
-        status_lbl.setPixmap(question_pix)
-        profile_buttons_grid.addWidget(status_lbl, 0, 5)
+        self.status_lbl.setPixmap(self.question_pix)
+        profile_buttons_grid.addWidget(self.status_lbl, 0, 5)
 
 
 
@@ -190,13 +192,13 @@ class Connecting(QtWidgets.QWidget):
             profile_list = get_all_profiles(path_to_json, dt_name)
 
             # Очищаем список профилей из combo box (profile_value_cmbb)
-            profile_value_cmbb.clear()
+            self.profile_value_cmbb.clear()
 
             # Добавляем новые значения в combo box (profile_value_cmbb)
             for i in sorted(profile_list):
-                profile_value_cmbb.addItem(i)
+                self.profile_value_cmbb.addItem(i)
 
-            curr_prof = profile_value_cmbb.currentText()
+            curr_prof = self.profile_value_cmbb.currentText()
             change_profile(path_to_json, dt_name, curr_prof)
 
         # Показываем окно создания нового профиля
@@ -219,7 +221,7 @@ class Connecting(QtWidgets.QWidget):
             :param dt_name: имя диалекта, для которого удаляем профиль
             :return: None
             """
-            curr_profile = profile_value_cmbb.currentText()
+            curr_profile = self.profile_value_cmbb.currentText()
 
             # Удаляем профиль из json файла
             del_profile_from_json(json_file, dt_name, curr_profile)
@@ -241,7 +243,7 @@ class Connecting(QtWidgets.QWidget):
 
         """ Устанавливаем обработку действий """
         # При изменении активированного профиля
-        profile_value_cmbb.activated[str].connect(partial(change_profile,
+        self.profile_value_cmbb.activated[str].connect(partial(change_profile,
                                                           PATH_TO_PROFILE_SETTINGS_JSON,
                                                           dialect_name))
 
@@ -256,3 +258,28 @@ class Connecting(QtWidgets.QWidget):
         delete_profile_btn.clicked.connect(partial(del_curr_profile,
                                                    PATH_TO_PROFILE_SETTINGS_JSON,
                                                    dialect_name))
+
+
+
+    def test_connection(self, path_to_json: str, dialect_name: str, query_for_test):
+        """
+        Функция проверяет возможность подключения. В зависимости от результата меняет иконку для статуса подключения
+         А так же при ошибке подключения выводит окно ошибки
+
+        :param path_to_json: Путь к файлу с настройками для подключения
+        :param dialect_name: Имя диалекта
+        :param query_for_test: Имя профиля настроек
+        :return: None
+        """
+        curr_prof_name = self.profile_value_cmbb.currentText()
+        curr_settings = get_profile_settings_value(path_to_json, dialect_name, curr_prof_name)
+
+        # Пытаемся подключиться
+        try:
+            query_for_test(curr_settings)
+            self.status_lbl.setPixmap(self.success_pix)
+            self.status_lbl.setToolTip('Connected')
+        except:
+            self.status_lbl.setPixmap(self.error_pix)
+            self.status_lbl.setToolTip(sys.exc_info()[1].args[0])
+            show_error_msg_window('Connection failed!', sys.exc_info()[1].args[0], self)

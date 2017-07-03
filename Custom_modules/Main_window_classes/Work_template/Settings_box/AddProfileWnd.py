@@ -117,14 +117,12 @@ class AddingNewProfileWindow(QtWidgets.QWidget):
             new_settings = get_settings()
 
             # Проверяем что HOST, USER и new_profile_name заполнены
-            if not new_settings['new_profile_name'] or not new_settings['host'] or not new_settings['port']:
+            if not new_settings['new_profile_name'] or not new_settings['host']:
                 err_msg = ''
                 if not new_settings['new_profile_name']:
                     err_msg += 'The field "New profile" is not filled!\n'
                 if not new_settings['host']:
                     err_msg += 'The field "HOST" is not filled!\n'
-                if not new_settings['port']:
-                    err_msg += 'The field "PORT" is not filled!\n'
 
                 # Показываем окно ошибки и завершаем функцию
                 show_error_msg_window('Fields of the form are not filled', err_msg, parent)
