@@ -16,6 +16,8 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
         SettingsWindow.__init__(self, dialect_name)
 
         ObjectTreeWindow.__init__(self,
+                                  dialect_name,
+                                  self.profile_value_cmbb,
                                   type_of_top_item,
                                   test_connection,
                                   query_load_databases,

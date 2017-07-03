@@ -37,33 +37,82 @@ def check_connect(connect_param: dict = None):
     # return sys.exc_info()[1].args[0]
 
 def load_databases(connect_param: dict = None):
-    out_arr = [
-        'database1',
-        'database2',
-        'database3',
-        'database4'
-    ]
-    return out_arr
+    conn_string = get_full_con_str(connect_param)
+
+    cnct = psycopg2.connect(conn_string)
+
+    cursor = cnct.cursor()
+    sql_query = """
+            SELECT d.datname as name
+             --, d.datcollate as collation
+             --, d.datname as current_object_id
+             --, current_schema() as default_schema
+            FROM pg_database d
+            WHERE 
+              d.datistemplate = false
+            ORDER BY d.datname
+        """
+
+    cursor.execute(sql_query)
+    records = cursor.fetchall()
+
+    out_obj = []
+
+    for i in records:
+        out_obj.append(i[0])
+
+    return out_obj
 
 
 def load_schemes(connect_param: dict = None, db_name: str = None):
-    out_arr = [
-        db_name + '_schema1',
-        db_name + '_schema2',
-        db_name + '_schema3',
-        db_name + '_schema4',
-        db_name + '_schema5'
-    ]
+    conn_string = get_full_con_str(connect_param)
+    cnct = psycopg2.connect(conn_string)
+
+    cursor = cnct.cursor()
+    sql_query = """
+                select 
+                     schema_name as name
+                  from information_schema.schemata
+                where
+                 catalog_name = '{}'
+                order by schema_name;
+            """.format(db_name)
+
+    cursor.execute(sql_query)
+    records = cursor.fetchall()
+
+    out_arr = []
+
+    for i in records:
+        out_arr.append(i[0])
+
     return out_arr
 
 
 def load_tables(connect_param: dict = None, db_name: str = None, schema_name: str = None):
-    out_arr = [
-        schema_name + '_table1',
-        schema_name + '_table2',
-        schema_name + '_table3',
-        schema_name + '_table4',
-        schema_name + '_table5',
-        schema_name + '_table6'
-    ]
+    conn_string = get_full_con_str(connect_param)
+    cnct = psycopg2.connect(conn_string)
+
+    cursor = cnct.cursor()
+    sql_query = """
+            select
+             t.table_name as name
+            from 
+             information_schema.tables t
+            where 
+             t.table_type = 'BASE TABLE'
+             --AND t.table_catalog = '' 
+             AND t.table_schema = '{}' 
+            order by
+             t.table_name;
+        """.format(schema_name)
+
+    cursor.execute(sql_query)
+    records = cursor.fetchall()
+
+    out_arr = []
+
+    for i in records:
+        out_arr.append(i[0])
+
     return out_arr

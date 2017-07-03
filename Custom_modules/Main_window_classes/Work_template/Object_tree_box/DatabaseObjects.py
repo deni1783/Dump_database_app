@@ -1,9 +1,16 @@
 from PyQt5 import QtWidgets, QtCore
+import sys
 from functools import partial
+from Custom_modules.Functions.json_fn import get_profile_settings_value
+from Custom_modules.Functions.ui_fn import show_error_msg_window, change_cursor
+from Custom_modules.Constants import PATH_TO_PROFILE_SETTINGS_JSON
+
 
 
 class DatabaseObjectTree(QtWidgets.QWidget):
     def __init__(self,
+                 dialect_name: str,
+                 profile_value_cmbb,
                  top_lvl_item: str,
                  test_connection,
                  query_load_databases,
@@ -111,7 +118,9 @@ class DatabaseObjectTree(QtWidgets.QWidget):
                 child.setFlags(child.flags() | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
                 child.setCheckState(0, QtCore.Qt.Unchecked)
 
-        def on_doubleclick_tree_item(tree, load_db, load_schema, load_table):
+        def on_doubleclick_tree_item(tree, json_settings: str, load_db, load_schema, load_table):
+
+            change_cursor('wait')
 
             # Получаем нажатый элемент, он является родителем
             curr_item = tree.currentItem()
@@ -120,45 +129,62 @@ class DatabaseObjectTree(QtWidgets.QWidget):
             # Получаем тип нажатого элемента
             curr_item_type = get_item_type(curr_item, top_lvl_item)
 
+            curr_profile = profile_value_cmbb.currentText()
+            current_connection_settings = get_profile_settings_value(json_settings, dialect_name, curr_profile)
+
+
+
 
             # Выбираем нужную функцию и параметры к ней в зависимости от типа родителя
             # Когда curr_item_type == table or curr_item_type == unknown
             # children_arr остается пустым массивом и детей мы не добавляем
-            children_arr = []
-            if curr_item_type == 'top_level':
-                # Для диалектов у которого верхний уровень - БАЗА
-                if top_lvl_item == 'database':
-                    # Загружием БАЗЫ
-                    children_arr = load_db()
 
-                # Для диалектов у которого верхний уровень - СХЕМА
-                elif top_lvl_item == 'schema':
+            # /Обрабатываем исключения для запросов
+            try:
+                children_arr = []
+                if curr_item_type == 'top_level':
+                    # Для диалектов у которого верхний уровень - БАЗА
+                    if top_lvl_item == 'database':
+                        # Загружием БАЗЫ
+                        children_arr = load_db(current_connection_settings)
+
+                    # Для диалектов у которого верхний уровень - СХЕМА
+                    elif top_lvl_item == 'schema':
+                        # Загружием СХЕМЫ
+                        children_arr = load_schema(current_connection_settings, curr_item_text)
+
+                # Для этих диалектов запросы необходимо запускать из друго БД,
+                # для этого меняем значение DATABASE в строке подключения
+                if dialect_name in ('postgresql', 'greenplum'):
+                    current_connection_settings['database'] = curr_item_text
+
+                if curr_item_type == 'database':
                     # Загружием СХЕМЫ
-                    children_arr = load_schema({}, curr_item_text)
+                    children_arr = load_schema(current_connection_settings, curr_item_text)
 
-            if curr_item_type == 'database':
-                # Загружием СХЕМЫ
-                children_arr = load_schema({}, curr_item_text)
+                elif curr_item_type == 'schema':
+                    # Загружием ТАБЛИЦЫ
+                    parent_db = curr_item.parent().text(0)
+                    children_arr = load_table(current_connection_settings, parent_db, curr_item_text)
 
-            elif curr_item_type == 'schema':
-                # Загружием ТАБЛИЦЫ
-                parent_db = curr_item.parent().text(0)
-                children_arr = load_table({}, parent_db, curr_item_text)
+                if children_arr:
+                    add_children_items(curr_item, children_arr)
+            except:
+                show_error_msg_window('Connection Error', sys.exc_info()[1].args[0], self)
 
-            if children_arr:
-                add_children_items(curr_item, children_arr)
-
+            change_cursor('normal')
 
 
         """ Добавляем обработку событий """
 
         # При двойном нажатии на элемент дерева
         self.objects_tree.itemDoubleClicked.connect(partial(on_doubleclick_tree_item,
-                                                    self.objects_tree,
-                                                    query_load_databases,
-                                                    query_load_schemes,
-                                                    query_load_tables
-                                                    ))
+                                                            self.objects_tree,
+                                                            PATH_TO_PROFILE_SETTINGS_JSON,
+                                                            query_load_databases,
+                                                            query_load_schemes,
+                                                            query_load_tables
+                                                            ))
 
 
 

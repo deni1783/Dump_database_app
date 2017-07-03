@@ -10,7 +10,6 @@ from Custom_modules.Functions.ui_fn import show_error_msg_window, change_cursor
 from Custom_modules.Main_window_classes.Work_template.Settings_box.AddProfileWnd import AddingNewProfileWindow
 
 
-
 class Connecting(QtWidgets.QWidget):
     def __init__(self, dialect_name: str, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
@@ -39,10 +38,6 @@ class Connecting(QtWidgets.QWidget):
         self.error_pix = QtGui.QPixmap("Img/Icons/error.png")
         self.question_pix = QtGui.QPixmap("Img/Icons/question.png")
 
-
-
-
-
         """ Пустой виджет, для отступа """
         empty_lbl = QtWidgets.QLabel()
 
@@ -67,9 +62,6 @@ class Connecting(QtWidgets.QWidget):
         user_value_ln.setReadOnly(True)
         password_value_ln.setReadOnly(True)
 
-
-
-
         """ Создание представлений для группировки """
 
         """ Профиль (HBOX) """
@@ -81,15 +73,12 @@ class Connecting(QtWidgets.QWidget):
         """ Параметры подключения (GRID) """
         connecting_string_grid = QtWidgets.QGridLayout()
 
-
-
-
         """ Группировка профиля """
         profile_hbox.addWidget(profile_lbl)
         profile_hbox.addWidget(self.profile_value_cmbb)
 
         """ Группировка кнопок настройки профиля """
-        profile_buttons_grid.addWidget(add_profile_btn, 0 ,0)
+        profile_buttons_grid.addWidget(add_profile_btn, 0, 0)
         profile_buttons_grid.addWidget(delete_profile_btn, 0, 1)
         profile_buttons_grid.addWidget(edit_profile_btn, 0, 2)
         # + кнопка тестирования соединения
@@ -99,9 +88,6 @@ class Connecting(QtWidgets.QWidget):
         # Изначально делаем статус неопределенным
         self.status_lbl.setPixmap(self.question_pix)
         profile_buttons_grid.addWidget(self.status_lbl, 0, 5)
-
-
-
 
         """ Группировка параметров подключения """
         # host
@@ -120,17 +106,11 @@ class Connecting(QtWidgets.QWidget):
         connecting_string_grid.addWidget(password_lbl, 4, 0)
         connecting_string_grid.addWidget(password_value_ln, 4, 1)
 
-
-
-
         """ Обертка для сгруппированных представлений (VBOX) """
         wrap_connect_settings_vbox = QtWidgets.QVBoxLayout()
         wrap_connect_settings_vbox.addLayout(profile_hbox)
         wrap_connect_settings_vbox.addLayout(connecting_string_grid)
         wrap_connect_settings_vbox.addLayout(profile_buttons_grid)
-
-
-
 
         """ Основной группирированный бокс (GBOX) """
         self.connecting_settings_out_gbox = QtWidgets.QGroupBox('Connection settings')
@@ -138,11 +118,6 @@ class Connecting(QtWidgets.QWidget):
         self.connecting_settings_out_gbox.setFlat(True)
         self.connecting_settings_out_gbox.setFixedSize(300, 280)
         self.connecting_settings_out_gbox.setLayout(wrap_connect_settings_vbox)
-
-
-
-
-
 
         """ Функции для работы с профилями """
 
@@ -206,16 +181,17 @@ class Connecting(QtWidgets.QWidget):
             change_profile(path_to_json, dt_name, curr_prof)
 
         # Показываем окно создания нового профиля
-        def show_create_new_prof_window(parent, path_to_json: str, dt_name: str, init_new_pfofiles_func):
+        def show_create_new_prof_window(parent, path_to_json: str, dt_name: str, init_new_profiles_func):
             """
             Функция получает класс создания нового профиля и показывает его
 
+            :param init_new_profiles_func: функция для записи профилей в combo box
             :param dt_name: имя диалекта, что бы коррекно записать профиль
             :param parent: Родительский компонент для которого показываем окно
             :param path_to_json: путь к файлу настроек подключения, что бы записать новые настройки
             :return: None
             """
-            new_prof_window = AddingNewProfileWindow(parent, path_to_json, dt_name, init_new_pfofiles_func)
+            new_prof_window = AddingNewProfileWindow(parent, path_to_json, dt_name, init_new_profiles_func)
             new_prof_window.create_profile_wnd.show()
 
         def del_curr_profile(json_file: str, dt_name: str):
@@ -233,23 +209,15 @@ class Connecting(QtWidgets.QWidget):
             # Перерисовываем значения для combo box
             init_start_profile_values(json_file, dt_name)
 
-
         """ Записываем значения профилей в profile_value_cmbb """
         # Запускаем init_start_profile_values
         init_start_profile_values(PATH_TO_PROFILE_SETTINGS_JSON, dialect_name)
 
-
-
-
-
-
-
-
         """ Устанавливаем обработку действий """
         # При изменении активированного профиля
         self.profile_value_cmbb.activated[str].connect(partial(change_profile,
-                                                          PATH_TO_PROFILE_SETTINGS_JSON,
-                                                          dialect_name))
+                                                               PATH_TO_PROFILE_SETTINGS_JSON,
+                                                               dialect_name))
 
         # При нажатии на кнопку добавить, показываем окно заполнени параметров нового профиля
         add_profile_btn.clicked.connect(partial(show_create_new_prof_window,
@@ -263,8 +231,6 @@ class Connecting(QtWidgets.QWidget):
                                                    PATH_TO_PROFILE_SETTINGS_JSON,
                                                    dialect_name))
 
-
-
     def test_connection(self, path_to_json: str, dialect_name: str, query_for_test):
         """
         Функция проверяет возможность подключения. В зависимости от результата меняет иконку для статуса подключения
@@ -275,6 +241,7 @@ class Connecting(QtWidgets.QWidget):
         :param query_for_test: Имя профиля настроек
         :return: None
         """
+        # Изменение курсора в вид ОЖИДАНИЕ
         change_cursor('wait')
 
         curr_prof_name = self.profile_value_cmbb.currentText()
@@ -285,9 +252,11 @@ class Connecting(QtWidgets.QWidget):
             query_for_test(curr_settings)
             self.status_lbl.setPixmap(self.success_pix)
             self.status_lbl.setToolTip('Connected')
+            # Изменение курсора в вид ОБЫЧНЫЙ
             change_cursor('normal')
         except:
             self.status_lbl.setPixmap(self.error_pix)
             self.status_lbl.setToolTip(sys.exc_info()[1].args[0])
+            # Изменение курсора в вид ОБЫЧНЫЙ
             change_cursor('normal')
             show_error_msg_window('Connection failed!', sys.exc_info()[1].args[0], self)
