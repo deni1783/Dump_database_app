@@ -31,16 +31,16 @@ class WorkTemplate(BaseWorkTemplateWindow):
 
 
         """ Обработка сигналов """
-        self.run_dump_btn.clicked.connect(partial(self.get_selected_items,
-                                                  self.DIALECT_SETTINGS_OBJ['type_of_top_item']
-                                                  ))
-
-        # Проверка подключения (по нажатию кнопки TEST)
-        self.test_connect_btn.clicked.connect(partial(self.test_connection,
-                                                      PATH_TO_PROFILE_SETTINGS_JSON,
-                                                      self.DIALECT_SETTINGS_OBJ['dialect_name'],
-                                                      self.DIALECT_SETTINGS_OBJ['test_connection']
-                                                      ))
+        # self.run_dump_btn.clicked.connect(partial(self.get_selected_items,
+        #                                           self.DIALECT_SETTINGS_OBJ['type_of_top_item']
+        #                                           ))
+        #
+        # # Проверка подключения (по нажатию кнопки TEST)
+        # self.test_connect_btn.clicked.connect(partial(self.test_connection,
+        #                                               PATH_TO_PROFILE_SETTINGS_JSON,
+        #                                               self.DIALECT_SETTINGS_OBJ['dialect_name'],
+        #                                               self.DIALECT_SETTINGS_OBJ['test_connection']
+        #                                               ))
 
         # Возвращаем в основной макет
         self.out_dialect_gbox = self.work_template_out_gbox

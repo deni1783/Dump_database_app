@@ -4,10 +4,11 @@ from functools import partial
 from Custom_modules.Main_window_classes.Work_template.SettingsBox import SettingsWindow
 from Custom_modules.Main_window_classes.Work_template.ObjectTreeBox import ObjectTreeWindow
 from Custom_modules.Main_window_classes.Work_template.LogBox import LogTextEdit
-from Custom_modules.Functions.json_fn import add_or_change_default_objects, get_full_json_data, get_profile_settings_value
+from Custom_modules.Functions.json_fn import add_or_change_default_objects, get_full_json_data, \
+    get_profile_settings_value
 from Custom_modules.Functions.ui_fn import show_error_msg_window, change_cursor
-from Custom_modules.Constants import PATH_TO_DEFAULT_OBJECTS_JSON, PATH_TO_PROFILE_SETTINGS_JSON, DIALECTS_FOR_CHANGE_DB_IN_QUERIES
-
+from Custom_modules.Constants import PATH_TO_DEFAULT_OBJECTS_JSON, PATH_TO_PROFILE_SETTINGS_JSON, \
+    DIALECTS_FOR_CHANGE_DB_IN_QUERIES
 
 
 class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
@@ -32,7 +33,6 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
 
         LogTextEdit.__init__(self)
 
-
         """ Группировка основных представлений Настроки и Дерево в HBOX"""
         work_template_hbox = QtWidgets.QHBoxLayout()
 
@@ -41,12 +41,9 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
         # Окно дерева
         work_template_hbox.addWidget(self.object_tree_window_out_gbox)
 
-
         """ Добавляем work_template_hbox в GBOX """
         wrap_top_wnd = QtWidgets.QGroupBox()
         wrap_top_wnd.setLayout(work_template_hbox)
-
-
 
         """ Обертка для рабочей области включает Настройки, Дерево и Лог SPLITTER """
         wrap_work_template_splitter = QtWidgets.QSplitter()
@@ -57,13 +54,9 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
         # Окно лога
         wrap_work_template_splitter.addWidget(self.log_area)
 
-
-
         """ Добавляем SPLITTER в HBOX """
         full_wrap = QtWidgets.QHBoxLayout()
         full_wrap.addWidget(wrap_work_template_splitter)
-
-
 
         """ Базовий GBOX для приложения """
         self.work_template_out_gbox = QtWidgets.QGroupBox(dialect_name)
@@ -72,15 +65,28 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
 
         self.work_template_out_gbox.setLayout(full_wrap)
 
-
-
         """ Обработка событий """
+
+        # Проверка соединения
+        self.test_connect_btn.clicked.connect(partial(self.test_connection,
+                                                      PATH_TO_PROFILE_SETTINGS_JSON,
+                                                      dialect_name,
+                                                      test_connection
+                                                      ))
+
+        # Запуск дампа
+        self.run_dump_btn.clicked.connect(partial(self.get_selected_items,
+                                                  type_of_top_item
+                                                  ))
+
+        # Сохранить выбранные элементы как шаблон
         self.save_as_default.clicked.connect(partial(self.save_as_default_object_list,
                                                      PATH_TO_DEFAULT_OBJECTS_JSON,
                                                      type_of_top_item,
                                                      dialect_name
                                                      ))
 
+        # Загрузить ранее сохраненный шаблон
         self.choose_default_obj_btn.clicked.connect(partial(self.load_default_objects,
                                                             PATH_TO_DEFAULT_OBJECTS_JSON,
                                                             PATH_TO_PROFILE_SETTINGS_JSON,
@@ -92,7 +98,8 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
                                                             query_load_tables
                                                             ))
 
-
+        # Выбор папки назначения
+        self.path_to_dir_btn.clicked.connect(partial(self.select_path_to_out_dir))
 
     def save_as_default_object_list(self, path_to_json: str, top_lvl_item: str, dialect_name: str):
         curr_prof_name = self.profile_value_cmbb.currentText()
@@ -154,7 +161,6 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
             change_cursor('normal')
             return
 
-
         profile_json_data = full_json_data[dialect_name][curr_prof_name]
         connection_settings = get_profile_settings_value(path_to_profile_conn_settings, dialect_name, curr_prof_name)
 
@@ -172,7 +178,6 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
         # Очищаем дерево
         for c in range(parent_tree_obj.childCount()):
             parent_tree_obj.removeChild(parent_tree_obj.child(c))
-
 
         # Загружаем элементы верхнего уровня
         if top_lvl_item == 'database':
@@ -208,10 +213,6 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
             self.add_children_items(parent_tree_obj, schemes_list)
             # Раскрываем элемент
             self.objects_tree.expandItem(parent_tree_obj)
-
-
-
-
 
         # Добавляем ТАБЛИЦЫ для схем
         # Вынесен в отдельный цикл, т.к. количество детей в дереве изменилось и нужно обойти его сначала
@@ -268,3 +269,17 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
                     self.objects_tree.expandItem(schema_item)
 
         change_cursor('normal')
+
+    def select_path_to_out_dir(self):
+        """
+        Функция вызвает показ окна выбора папки
+        записывает выбранное значение в self.path_to_dir_value_txt
+        и показывает этот выджет
+        :return: None
+        """
+        folder = QtWidgets.QFileDialog.getExistingDirectory(self, caption='Select folder', directory='/home')
+        if folder:
+            self.path_to_dir_value_txt.setText(folder)
+            self.path_to_dir_value_txt.show()
+
+    # def run
