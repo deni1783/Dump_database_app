@@ -37,7 +37,7 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
 
         """ Добавление уникальных настроек для диалекта """
         if fn_add_custom_widgets:
-            fn_add_custom_widgets(self.custom_settings_for_dump_vbox)
+            fn_add_custom_widgets(self, self.custom_settings_for_dump_vbox)
 
         """ Группировка основных представлений Настроки и Дерево в HBOX"""
         work_template_hbox = QtWidgets.QHBoxLayout()

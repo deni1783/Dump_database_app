@@ -1,0 +1,5 @@
+{
+  "postgresql": {
+    "path_to_pgdump": "C:/Program Files/PostgreSQL/9.5/bin/pg_dump.exe"
+  }
+}

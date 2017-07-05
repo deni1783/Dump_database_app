@@ -8,7 +8,7 @@ from Custom_modules.Main_window_classes.WorkTemplateBox import BaseWorkTemplateW
 from Dialects.Queries import (postgresql, redshift)
 
 # Модули добавления уникальных виджетов
-from Dialects.Custom_widgets import (custom_oracle)
+from Dialects.Custom_widgets import (custom_oracle, custom_postgresql)
 
 # Модули функций обработки генерации дампов
 from Dialects.Functions_for_geteration_dump import (run_dump_postgresql, run_dump_redshift)
@@ -24,7 +24,7 @@ class ApplicationLayout(DialectListBox):
             'postgresql': BaseWorkTemplateWindow(
                 dialect_name='postgresql',
                 type_of_top_item='database',
-                fn_add_custom_widgets=None,
+                fn_add_custom_widgets=custom_postgresql.add_custom_settings,
                 test_connection=postgresql.check_connect,
                 query_load_databases=postgresql.load_databases,
                 query_load_schemes=postgresql.load_schemes,
