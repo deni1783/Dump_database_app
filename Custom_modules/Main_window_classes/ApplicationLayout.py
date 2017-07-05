@@ -2,22 +2,57 @@ from PyQt5 import QtWidgets, QtCore
 from functools import partial
 from Custom_modules.Main_window_classes.DialectListBox import DialectListBox
 from Custom_modules.Functions.ui_fn import clear_widget
+from Custom_modules.Main_window_classes.WorkTemplateBox import BaseWorkTemplateWindow
 
-from Dialects.UI_windows import postgresql
-from Dialects.UI_windows import oracle
-from Dialects.UI_windows import redshift
+# Модули запросов для каждого диалекта
+from Dialects.Queries import (postgresql, redshift)
+
+# Модули добавления уникальных виджетов
+from Dialects.Custom_widgets import (custom_oracle)
+
+# Модули функций обработки генерации дампов
+from Dialects.Functions_for_geteration_dump import (run_dump_postgresql, run_dump_redshift)
 
 
 class ApplicationLayout(DialectListBox):
     def __init__(self, parent=None):
         DialectListBox.__init__(self, parent)
 
-        # Словарь для присвоения нужных GBOX
-        # При добавлении нового диалекта, необходимо добавить ссылку на GBOX для него
+        # Словарь для присвоения нужных параметров для создания интерфейса
+        # При добавлении нового диалекта, необходимо добавить параметры для этого диалекта
         self.dt_name_template = {
-            'postgresql': postgresql.WorkTemplate().out_dialect_gbox,
-            'oracle': oracle.WorkTemplate().out_dialect_gbox,
-            'redshift': redshift.WorkTemplate().out_dialect_gbox
+            'postgresql': BaseWorkTemplateWindow(
+                dialect_name='postgresql',
+                type_of_top_item='database',
+                fn_add_custom_widgets=None,
+                test_connection=postgresql.check_connect,
+                query_load_databases=postgresql.load_databases,
+                query_load_schemes=postgresql.load_schemes,
+                query_load_tables=postgresql.load_tables,
+                func_for_prepare_dump=run_dump_postgresql.generate_dump
+            ),
+
+            'oracle': BaseWorkTemplateWindow(
+                dialect_name='oracle',
+                type_of_top_item='schema',
+                fn_add_custom_widgets=custom_oracle.add_custom_settings,
+                test_connection=postgresql.check_connect,
+                query_load_databases=postgresql.load_databases,
+                query_load_schemes=postgresql.load_schemes,
+                query_load_tables=postgresql.load_tables,
+                func_for_prepare_dump=None
+            ),
+
+            'redshift': BaseWorkTemplateWindow(
+                dialect_name='redshift',
+                type_of_top_item='schema',
+                fn_add_custom_widgets=None,
+                test_connection=redshift.check_connect,
+                query_load_databases=redshift.load_databases,
+                query_load_schemes=redshift.load_schemes,
+                query_load_tables=redshift.load_tables,
+                func_for_prepare_dump=run_dump_redshift.generate_dump
+            )
         }
 
         # Представление для рабочей области
@@ -79,6 +114,6 @@ class ApplicationLayout(DialectListBox):
         # Проверяем что переданный диалект присутствует в словаре,
         # инаще возвращаем заглушку
         if dt_name.lower() in self.dt_name_template:
-            return self.dt_name_template[dt_name.lower()]
+            return self.dt_name_template[dt_name.lower()].work_template_out_gbox
         else:
             return QtWidgets.QGroupBox('Unsupported dialect: ' + dt_name)

@@ -119,6 +119,8 @@ class DatabaseObjectTree(QtWidgets.QWidget):
     def get_selected_items(self, top_lvl_item: str):
         """
         Функция проходит все дерево и формирует массив со всеми выбранными элементами
+        Вида: database.schema.table, ....
+        Или:  schema.table, ...
         Глобальная функция!
 
         :param top_lvl_item: тип элемента верхнего уровня, для корректной обработки
@@ -154,6 +156,77 @@ class DatabaseObjectTree(QtWidgets.QWidget):
                             all_children_arr.append(first_str + '.' + second_str)
 
         return all_children_arr
+
+    def get_selected_items_dict(self, top_lvl_item: str):
+        """
+        Функция проходит все дерево и формирует объект со всеми выбранными элементами
+
+        Для верхнего уровня - database
+        {
+            database1: {
+                schema1: [ table1, table2 ],
+                schema2: [ table1, table2 ],
+                ...
+            },
+            database2: {
+                schema: [ table1, table2 ],
+                schema2: [ table1, table2 ],
+                ...
+            },
+        }
+
+
+        Для верхнего уровня - schema
+        {
+            schema1: [ table1, table2 ],
+            schema2: [ table1, table2 ],
+            ...
+        }
+
+        Глобальная функция!
+
+        :param top_lvl_item: тип элемента верхнего уровня, для корректной обработки
+        :return: dict
+        """
+
+        result_obj = {}
+
+        # Получаем элемент верхнего уровня для всего дерева
+        root = self.objects_tree.topLevelItem(0)
+
+        # Обход всего дерева и заполнение массива all_children_arr
+        for i in range(root.childCount()):
+            first_item = root.child(i)
+            if first_item.checkState(0) != 0:
+                # Ключ для базы/схемы
+                first_str = first_item.text(0)
+
+                if top_lvl_item == 'database':
+                    result_obj[first_str] = {}
+                else:
+                    # top_lvl_item == 'schema'
+                    result_obj[first_str] = []
+
+                for j in range(first_item.childCount()):
+                    second_item = first_item.child(j)
+                    if second_item.checkState(0) != 0:
+                        # Ключ для схемы/таблицы
+                        second_str = second_item.text(0)
+
+                        if top_lvl_item == 'database':
+                            result_obj[first_str][second_str] = []
+                        else:
+                            # top_lvl_item == 'schema'
+                            result_obj[first_str].append(second_str)
+
+                        if second_item.childCount() != 0:
+                            for k in range(second_item.childCount()):
+                                third_item = second_item.child(k)
+                                if third_item.checkState(0) != 0:
+                                    # Ключ для таблицы
+                                    third_str = third_item.text(0)
+                                    result_obj[first_str][second_str].append(third_str)
+        return result_obj
 
     @staticmethod
     def get_item_type(item, top_item: str):

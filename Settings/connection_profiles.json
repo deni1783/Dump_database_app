@@ -91,13 +91,6 @@
       "password": "qwerty",
       "database": "DBCS"
     },
-    "ds111": {
-      "host": "2345.2345.23",
-      "port": "12313",
-      "database": "sjdfjasfh",
-      "user": "ds1111",
-      "password": "qwer"
-    },
     "fsadfg": {
       "host": "lksadjf",
       "port": "flkasdf",

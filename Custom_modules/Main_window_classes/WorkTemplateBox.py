@@ -15,10 +15,12 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
     def __init__(self,
                  dialect_name: str,
                  type_of_top_item: str,
+                 fn_add_custom_widgets,
                  test_connection,
                  query_load_databases,
                  query_load_schemes,
-                 query_load_tables):
+                 query_load_tables,
+                 func_for_prepare_dump):
 
         SettingsWindow.__init__(self, dialect_name)
 
@@ -32,6 +34,10 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
                                   query_load_tables)
 
         LogTextEdit.__init__(self)
+
+        """ Добавление уникальных настроек для диалекта """
+        if fn_add_custom_widgets:
+            fn_add_custom_widgets(self.custom_settings_for_dump_vbox)
 
         """ Группировка основных представлений Настроки и Дерево в HBOX"""
         work_template_hbox = QtWidgets.QHBoxLayout()
@@ -75,8 +81,11 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
                                                       ))
 
         # Запуск дампа
-        self.run_dump_btn.clicked.connect(partial(self.get_selected_items,
-                                                  type_of_top_item
+        self.run_dump_btn.clicked.connect(partial(self.run_prepare_dump,
+                                                  dialect_name,
+                                                  type_of_top_item,
+                                                  test_connection,
+                                                  func_for_prepare_dump
                                                   ))
 
         # Сохранить выбранные элементы как шаблон
@@ -282,4 +291,66 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
             self.path_to_dir_value_txt.setText(folder)
             self.path_to_dir_value_txt.show()
 
-    # def run
+    def run_prepare_dump(self, dialect_name: str,
+                         top_item_type: str,
+                         query_for_test_connection,
+                         func_for_prepare_dump):
+
+        # Проверяем что выбрана папка для выгрузки, если ее нет то выводим окно выбора папки
+        if not self.path_to_dir_value_txt.text():
+            self.select_path_to_out_dir()
+
+        # Если директория все таки не выбрана возвращаем окно ошибки
+        if not self.path_to_dir_value_txt.text():
+            return show_error_msg_window('Error!', 'The directory for uploading files is not selected. '
+                                                   'Please select the directory and try again', self)
+
+        # Получаем текущие параметры подключения
+        curr_prof_name = self.profile_value_cmbb.currentText()
+        curr_prof_settings = get_profile_settings_value(PATH_TO_PROFILE_SETTINGS_JSON, dialect_name, curr_prof_name)
+
+        change_cursor('wait')
+
+        # Проверяем возможность подключения с текущими параметрами
+        try:
+            query_for_test_connection(curr_prof_settings)
+        except:
+            change_cursor('normal')
+            show_error_msg_window('Connection Error', sys.exc_info()[1].args[0], self)
+
+        # Получаем выбранные элементы дерева объектов (массив)
+        selected_objects_arr = self.get_selected_items(top_item_type)
+
+        # Получаем выбранные элементы дерева объектов (словарь)
+        selected_objects_dict = self.get_selected_items_dict(top_item_type)
+
+        selected_type_of_dump = self.get_checked_type_dump_radio()
+
+        # Если нет выбранных объектов возвращаем окно ошибки
+        if not selected_objects_arr:
+            change_cursor('normal')
+            return show_error_msg_window('No objects', 'No selected objects for prepare DUMP', self)
+
+        # Если нет функции для запуска дампа, выводим окно ошибки
+        if not func_for_prepare_dump:
+            change_cursor('normal')
+            return show_error_msg_window('No function for DUMP', 'No function to handle the dump', self)
+
+        # Запускае функцию для генерации дампа
+        # Параметры:
+        # - : widget - текущий объект, что бы можно было обращаться ко всем объектам
+        # - : str - тип верхнего элемента
+        # - : dict - текущие параметры подключения, для упрощения доступа
+        # - : list - выбранные объекты для дампа список [database1.schema1.table1]
+        # - : dict - выбранные объекты для дампа словарь {}
+        # - : str - выбранная папка для выгрузки дампа
+        # - : widget - виджет для логирования хода выполнения
+        func_for_prepare_dump(self,
+                              top_item_type,
+                              curr_prof_settings,
+                              selected_objects_arr,
+                              selected_objects_dict,
+                              selected_type_of_dump,
+                              self.path_to_dir_value_txt.text(),
+                              self.log_area)
+        change_cursor('normal')
