@@ -16,8 +16,8 @@ def select_path_to_pgdump(path_to_json: str):
     # Ели ранее уже выбиралься путь,
     # то при открытии окна выбора файла, открываем ранее указанный путь
     # иначе домашнюю директорию
-    if 'postgresql' in json_data and 'path_to_pgdump' in json_data['postgresql']:
-        start_dir = json_data['postgresql']['path_to_pgdump']
+    if 'path_to_pgdump' in json_data:
+        start_dir = json_data['path_to_pgdump']
     else:
         start_dir = '/home'
 
@@ -26,11 +26,8 @@ def select_path_to_pgdump(path_to_json: str):
     if not path_to_pgdump:
         return
 
-    if 'postgresql' not in json_data:
-        json_data['postgresql'] = {}
-
     # Записываем или перезаписываем путь к файлу
-    json_data['postgresql']['path_to_pgdump'] = path_to_pgdump
+    json_data['path_to_pgdump'] = path_to_pgdump
 
     # Записываем новые данные в файл JSON
     json_fn.re_write_json_file(path_to_json, json_data)
