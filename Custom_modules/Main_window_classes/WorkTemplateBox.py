@@ -329,13 +329,15 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
         # Если нет выбранных объектов возвращаем окно ошибки
         if not selected_objects_arr:
             change_cursor('normal')
-            return show_error_msg_window('No objects', 'No selected objects for prepare DUMP', self)
+            return show_error_msg_window('Objects Error', 'No selected objects for prepare DUMP', self)
 
         # Если нет функции для запуска дампа, выводим окно ошибки
         if not func_for_prepare_dump:
             change_cursor('normal')
-            return show_error_msg_window('No function for DUMP', 'No function to handle the dump', self)
+            return show_error_msg_window('Function Error', 'No function to handle the dump', self)
 
+
+        self.run_dump_btn.setDisabled(True)
         # Запускае функцию для генерации дампа
         # Параметры:
         # - : widget - текущий объект, что бы можно было обращаться ко всем объектам
@@ -345,12 +347,20 @@ class BaseWorkTemplateWindow(SettingsWindow, ObjectTreeWindow, LogTextEdit):
         # - : dict - выбранные объекты для дампа словарь {}
         # - : str - выбранная папка для выгрузки дампа
         # - : widget - виджет для логирования хода выполнения
-        func_for_prepare_dump(self,
-                              top_item_type,
-                              curr_prof_settings,
-                              selected_objects_arr,
-                              selected_objects_dict,
-                              selected_type_of_dump,
-                              self.path_to_dir_value_txt.text(),
-                              self.log_area)
-        change_cursor('normal')
+        try:
+            func_for_prepare_dump(self,
+                                  top_item_type,
+                                  curr_prof_settings,
+                                  selected_objects_arr,
+                                  selected_objects_dict,
+                                  selected_type_of_dump,
+                                  self.path_to_dir_value_txt.text(),
+                                  self.log_area)
+        except:
+            self.run_dump_btn.setDisabled(False)
+            change_cursor('normal')
+            show_error_msg_window('Error', sys.exc_info()[1].args[0], self)
+
+        # self.run_dump_btn.setDisabled(False)
+        #
+        # change_cursor('normal')

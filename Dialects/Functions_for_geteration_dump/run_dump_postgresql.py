@@ -3,6 +3,47 @@ from Custom_modules.Functions import json_fn, ui_fn, cmd_fn
 from Custom_modules.Constants import PATH_TO_CUSTOM_SETTINGS_JSON
 from Dialects.Custom_widgets.custom_postgresql import select_path_to_pgdump
 
+from functools import partial
+
+from PyQt5 import QtCore
+# from Modules.my_classes.ClassForCMD.for_cmd import run_cmd
+# from Modules.my_classes.custom_functions import write_to_log
+
+
+
+class MyThread(QtCore.QThread):
+    mysignal = QtCore.pyqtSignal(str)
+
+    def __init__(self, list_of_cmd, parent=None):
+        QtCore.QThread.__init__(self, parent)
+        self.list_cmd = list_of_cmd
+        self.cmd = None
+        self.code = None
+        self.stdout = None
+        self.stderr = None
+        self.object = None
+
+    def run(self):
+        for i in self.list_cmd:
+            # self.sleep(2)
+            # self.object = i[0]
+            # self.cmd = i[1]
+            self.cmd = i
+            self.mysignal.emit(i)
+            # print(self.object)
+            # print(self.cmd)
+            (self.code, self.stdout, self.stderr) = cmd_fn.run_cmd(self.cmd)
+            # write_to_log(self.dialect_name, self.object,
+            #              self.stdout, self.code,
+            #              self.stderr)
+            # self.mysignal.emit(i)
+
+
+
+
+
+
+
 
 
 def make_list_cmd_for_bcp(path_to_pg_dump: str, connecting_settings: dict, obj_dict: dict, type_of_dump: str, out_dir: str):
@@ -115,7 +156,18 @@ def generate_dump(parent_obj,
                   log_area):
 
 
-    # print(selected_objects_dict)
+    def on_started_thread():
+        log_area.append('DUMP generation started')
+
+    def on_change_thread(s):
+        print(s)
+        log_area.append(s)
+
+    def on_finished_thread():
+        log_area.append('DUMP generation finished')
+        parent_obj.run_dump_btn.setDisabled(False)
+        ui_fn.change_cursor('normal')
+
 
     # Проверяем что указан путь к pg_dump.exe
     json_data = json_fn.get_full_json_data(PATH_TO_CUSTOM_SETTINGS_JSON)
@@ -131,10 +183,18 @@ def generate_dump(parent_obj,
                                              selected_objects_dict, selected_type_of_dump,
                                              out_put_dir)
     # print(all_cmd_commands)
-    for s in all_cmd_commands:
-        (return_code, stdout, stderr) = cmd_fn.run_cmd(s)
+    # for s in all_cmd_commands:
+    #     (return_code, stdout, stderr) = cmd_fn.run_cmd(s)
+    #
+    #     # Если произошла ошибка в ходе виполнения выводим окно ошибки
+    #     if return_code:
+    #         raise NameError(stderr)
 
-        # Если произошла ошибка в ходе виполнения выводим окно ошибки
-        if return_code:
-            return ui_fn.show_error_msg_window('Error!', stderr, parent_obj)
+    mythread = MyThread(all_cmd_commands)
+    mythread.started.connect(on_started_thread)
+    mythread.mysignal.connect(on_change_thread, QtCore.Qt.QueuedConnection)
+    mythread.finished.connect(on_finished_thread)
+
+    mythread.start()
+
 

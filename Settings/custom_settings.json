@@ -1,5 +1,5 @@
 {
   "postgresql": {
-    "path_to_pgdump": "C:/Program Files/PostgreSQL/9.5/bin/pg_dump.exe"
+    "path_to_pgdump": "D:/__PYTHON__/PyCharmProjects/Dump_database_app/Utils/pg_dump/pg_dump.exe"
   }
 }
