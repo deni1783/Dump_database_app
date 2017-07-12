@@ -5,7 +5,7 @@ from Custom_modules.Functions.json_fn import get_profile_settings_value
 from Custom_modules.Functions.json_fn import get_all_profiles
 from Custom_modules.Functions.json_fn import del_profile_from_json
 from Custom_modules.Constants import PATH_TO_PROFILE_SETTINGS_JSON
-from Custom_modules.Functions.ui_fn import show_error_msg_window, change_cursor
+from Custom_modules.Functions.ui_fn import show_error_msg_window, change_cursor, move_widget_to_center
 
 from Custom_modules.Main_window_classes.Work_template.Settings_box.AddProfileWnd import AddingNewProfileWindow
 
@@ -201,13 +201,23 @@ class Connecting(QtWidgets.QWidget):
             :param dt_name: имя диалекта, для которого удаляем профиль
             :return: None
             """
+
+
             curr_profile = self.profile_value_cmbb.currentText()
 
-            # Удаляем профиль из json файла
-            del_profile_from_json(json_file, dt_name, curr_profile)
+            msg_box = QtWidgets.QMessageBox(self)
+            msg_box.setWindowFlags(msg_box.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
+            msg_box.setWindowTitle('Delete profile')
+            move_widget_to_center(msg_box)
+            msg_box.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            msg_box.setText('Are you sure you want to delete the profile "{}"?'.format(curr_profile))
+            result = msg_box.exec_()
+            if QtWidgets.QMessageBox.Yes == result:
+                # Удаляем профиль из json файла
+                del_profile_from_json(json_file, dt_name, curr_profile)
 
-            # Перерисовываем значения для combo box
-            init_start_profile_values(json_file, dt_name)
+                # Перерисовываем значения для combo box
+                init_start_profile_values(json_file, dt_name)
 
         """ Записываем значения профилей в profile_value_cmbb """
         # Запускаем init_start_profile_values

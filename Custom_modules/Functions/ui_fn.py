@@ -39,6 +39,7 @@ def show_error_msg_window(error_title: str, message_text: str, parent=None):
 
     error_msg.setWindowTitle(error_title)
     error_msg.showMessage(message_text)
+    error_msg.setWindowFlags(error_msg.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
     error_msg.show()
 
 

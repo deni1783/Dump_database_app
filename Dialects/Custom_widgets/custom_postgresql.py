@@ -22,7 +22,7 @@ def select_path_to_pgdump(path_to_json: str):
         start_dir = '/home'
 
     path_to_pgdump = QtWidgets.QFileDialog.getOpenFileName(caption='Choose pg_dump.exe file',
-                                                           directory=start_dir, filter='*.exe')[0]
+                                                           directory=start_dir, filter='pg_dump.exe')[0]
     if not path_to_pgdump:
         return
 

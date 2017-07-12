@@ -80,7 +80,7 @@ class AddingNewProfileWindow(QtWidgets.QWidget):
 
         """ Окно добавления нового профиля """
         self.create_profile_wnd = QtWidgets.QWidget()
-        self.create_profile_wnd.setWindowFlags(QtCore.Qt.Tool)
+        self.create_profile_wnd.setWindowFlags(QtCore.Qt.Tool | QtCore.Qt.WindowStaysOnTopHint)
         self.create_profile_wnd.setWindowTitle('New profile')
 
         self.create_profile_wnd.setLayout(wrap_vbox)
