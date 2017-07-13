@@ -5,3 +5,4 @@ PATH_TO_CUSTOM_SETTINGS_JSON = r'Settings/custom_settings.json'
 
 # Для этого списка диалектов, в запросах нужно изменять БАЗУ в параметрах подключения
 DIALECTS_FOR_CHANGE_DB_IN_QUERIES = ['postgresql', 'greenplum']
+# DIALECTS_FOR_CHANGE_DB_IN_QUERIES = ['postgresql']

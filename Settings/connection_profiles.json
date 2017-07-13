@@ -120,6 +120,13 @@
       "user": "min_privs",
       "password": "Min_privs99",
       "database": "postgres"
+    },
+    "admin": {
+      "host": "192.168.13.59",
+      "port": "default",
+      "database": "postgres",
+      "user": "dbcs_super",
+      "password": "dbcs123"
     }
   },
   "netezza": {

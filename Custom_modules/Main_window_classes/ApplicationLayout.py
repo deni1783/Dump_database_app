@@ -5,7 +5,7 @@ from Custom_modules.Functions.ui_fn import clear_widget
 from Custom_modules.Main_window_classes.WorkTemplateBox import BaseWorkTemplateWindow
 
 # Модули запросов для каждого диалекта
-from Dialects.Queries import (postgresql, redshift)
+from Dialects.Queries import (postgresql, redshift, greenplum)
 
 # Модули добавления уникальных виджетов
 from Dialects.Custom_widgets import (custom_oracle, custom_postgresql)
@@ -29,6 +29,20 @@ class ApplicationLayout(DialectListBox):
                 query_load_databases=postgresql.load_databases,
                 query_load_schemes=postgresql.load_schemes,
                 query_load_tables=postgresql.load_tables,
+                func_for_prepare_dump=run_dump_postgresql.generate_dump
+            ),
+
+            'greenplum': BaseWorkTemplateWindow(
+                dialect_name='greenplum',
+                type_of_top_item='database',
+
+                # Добавляем такие же уникальные виджеты как и для PostgreSQL
+                fn_add_custom_widgets=custom_postgresql.add_custom_settings,
+
+                test_connection=greenplum.check_connect,
+                query_load_databases=greenplum.load_databases,
+                query_load_schemes=greenplum.load_schemes,
+                query_load_tables=greenplum.load_tables,
                 func_for_prepare_dump=run_dump_postgresql.generate_dump
             ),
 

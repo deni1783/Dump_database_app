@@ -77,16 +77,24 @@ class DatabaseObjectTree(QtWidgets.QWidget):
                         # Загружием СХЕМЫ
                         children_arr = load_schema(current_connection_settings, curr_item_text)
 
-                # Для этих диалектов запросы необходимо запускать из друго БД,
-                # для этого меняем значение DATABASE в строке подключения
-                if dialect_name in DIALECTS_FOR_CHANGE_DB_IN_QUERIES:
-                    current_connection_settings['database'] = curr_item_text
 
+                print(current_connection_settings)
                 if curr_item_type == 'database':
+                    # Для этих диалектов запросы необходимо запускать из друго БД,
+                    # для этого меняем значение DATABASE в строке подключения
+                    if dialect_name in DIALECTS_FOR_CHANGE_DB_IN_QUERIES:
+                        current_connection_settings['database'] = curr_item_text
+
                     # Загружием СХЕМЫ
                     children_arr = load_schema(current_connection_settings, curr_item_text)
 
                 elif curr_item_type == 'schema':
+                    # Для этих диалектов запросы необходимо запускать из друго БД,
+                    # для этого меняем значение DATABASE в строке подключения,
+                    # находим родителя и подстовляем его в качестве базы
+                    if dialect_name in DIALECTS_FOR_CHANGE_DB_IN_QUERIES:
+                        current_connection_settings['database'] = curr_item.parent().text(0)
+
                     # Загружием ТАБЛИЦЫ
                     parent_db = curr_item.parent().text(0)
                     children_arr = load_table(current_connection_settings, parent_db, curr_item_text)
