@@ -60,7 +60,10 @@ class ApplicationLayout(DialectListBox):
             'redshift': BaseWorkTemplateWindow(
                 dialect_name='redshift',
                 type_of_top_item='schema',
-                fn_add_custom_widgets=None,
+
+                # Добавляем такие же уникальные виджеты как и для PostgreSQL
+                fn_add_custom_widgets=custom_postgresql.add_custom_settings,
+
                 test_connection=redshift.check_connect,
                 query_load_databases=redshift.load_databases,
                 query_load_schemes=redshift.load_schemes,
