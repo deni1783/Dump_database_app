@@ -205,6 +205,7 @@ class Connecting(QtWidgets.QWidget):
 
             curr_profile = self.profile_value_cmbb.currentText()
 
+            # Создаем диалоговое окно для подтверждения удаления профиля
             msg_box = QtWidgets.QMessageBox(self)
             msg_box.setWindowFlags(msg_box.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
             msg_box.setWindowTitle('Delete profile')
@@ -212,6 +213,7 @@ class Connecting(QtWidgets.QWidget):
             msg_box.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
             msg_box.setText('Are you sure you want to delete the profile "{}"?'.format(curr_profile))
             result = msg_box.exec_()
+
             if QtWidgets.QMessageBox.Yes == result:
                 # Удаляем профиль из json файла
                 del_profile_from_json(json_file, dt_name, curr_profile)
