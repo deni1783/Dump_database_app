@@ -11,7 +11,7 @@ from Dialects.Queries import (postgresql, redshift, greenplum)
 from Dialects.Custom_widgets import (custom_oracle, custom_postgresql)
 
 # Модули функций обработки генерации дампов
-from Dialects.Functions_for_geteration_dump import (run_dump_postgresql, run_dump_redshift)
+from Dialects.Functions_for_geteration_dump import (run_dump_postgresql, run_dump_redshift, run_dump_greenplum)
 
 
 class ApplicationLayout(DialectListBox):
@@ -43,7 +43,7 @@ class ApplicationLayout(DialectListBox):
                 query_load_databases=greenplum.load_databases,
                 query_load_schemes=greenplum.load_schemes,
                 query_load_tables=greenplum.load_tables,
-                func_for_prepare_dump=run_dump_postgresql.generate_dump
+                func_for_prepare_dump=run_dump_greenplum.generate_dump
             ),
 
             'oracle': BaseWorkTemplateWindow(

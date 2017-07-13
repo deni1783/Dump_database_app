@@ -78,7 +78,6 @@ class DatabaseObjectTree(QtWidgets.QWidget):
                         children_arr = load_schema(current_connection_settings, curr_item_text)
 
 
-                print(current_connection_settings)
                 if curr_item_type == 'database':
                     # Для этих диалектов запросы необходимо запускать из друго БД,
                     # для этого меняем значение DATABASE в строке подключения

@@ -41,5 +41,21 @@
         "exactdecimalnumerics"
       ]
     }
+  },
+  "greenplum": {
+    "admin": {
+      "dbcs": {
+        "dbcs_d_azure": [
+          "approximatenumerics",
+          "characterstrings"
+        ],
+        "dbcs_d_greenplum": [
+          "exactintegernumerics"
+        ],
+        "dbcs_d_netezza_e": [
+          "approximatenumerics"
+        ]
+      }
+    }
   }
 }
